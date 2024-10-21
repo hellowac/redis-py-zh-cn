@@ -1,22 +1,22 @@
-Connecting to Redis
-###################
+连接到 Redis (Connecting to Redis)
+######################################
 
 
-Generic Client
-**************
+通用客户端(Generic Client)
+****************************
 
-This is the client used to connect directly to a standard Redis node.
+这是用于直接连接到标准 Redis 节点的客户端。
 
 .. autoclass:: redis.Redis
    :members:
 
 
-Sentinel Client
-***************
+哨兵客户端(Sentinel Client)
+******************************
 
-Redis `Sentinel <https://redis.io/topics/sentinel>`_ provides high availability for Redis. There are commands that can only be executed against a Redis node running in sentinel mode. Connecting to those nodes, and executing commands against them requires a Sentinel connection.
+Redis `Sentinel <https://redis.io/topics/sentinel>`_ 提供 Redis 的高可用性。有些命令只能在以哨兵模式运行的 Redis 节点上执行。连接到这些节点并对它们执行命令需要使用哨兵连接。
 
-Connection example (assumes Redis exists on the ports listed below):
+连接示例（假设 Redis 在下面列出的端口上存在）：
 
    >>> from redis import Sentinel
    >>> sentinel = Sentinel([('localhost', 26379)], socket_timeout=0.1)
@@ -25,21 +25,21 @@ Connection example (assumes Redis exists on the ports listed below):
    >>> sentinel.discover_slaves('mymaster')
    [('127.0.0.1', 6380)]
 
-Sentinel
-========
+哨兵(Sentinel)
+================
 .. autoclass:: redis.sentinel.Sentinel
     :members:
 
-SentinelConnectionPool
-======================
+哨兵连接池(SentinelConnectionPool)
+============================================
 .. autoclass:: redis.sentinel.SentinelConnectionPool
     :members:
 
 
-Cluster Client
-**************
+集群客户端(Cluster Client)
+****************************
 
-This client is used for connecting to a Redis Cluster.
+此客户端用于连接到 Redis 集群。
 
 RedisCluster
 ============
@@ -52,66 +52,66 @@ ClusterNode
     :members:
 
 
-Async Client
-************
+异步客户端(Async Client)
+************************************
 
-See complete example: `here <examples/asyncio_examples.html>`__
+完整示例见： `这里 <examples/asyncio_examples.html>`__
 
-This client is used for communicating with Redis, asynchronously.
+此客户端用于异步与 Redis 通信。
 
 .. autoclass:: redis.asyncio.client.Redis
     :members:
 
 
-Async Cluster Client
+异步集群客户端
 ********************
 
-RedisCluster (Async)
+RedisCluster (异步)
 ====================
 .. autoclass:: redis.asyncio.cluster.RedisCluster
     :members:
     :member-order: bysource
 
-ClusterNode (Async)
+ClusterNode (异步)
 ===================
 .. autoclass:: redis.asyncio.cluster.ClusterNode
     :members:
     :member-order: bysource
 
-ClusterPipeline (Async)
+ClusterPipeline (异步)
 =======================
 .. autoclass:: redis.asyncio.cluster.ClusterPipeline
     :members: execute_command, execute
     :member-order: bysource
 
 
-Connection
-**********
+连接(Connection)
+********************
 
-See complete example: `here <examples/connection_examples.html>`__
+完整示例见： `这里 <examples/connection_examples.html>`__
 
-Connection
-==========
+连接(Connection)
+====================
 .. autoclass:: redis.connection.Connection
     :members:
 
-Connection (Async)
-==================
+连接 (异步)(Connection (Async))
+====================================
 .. autoclass:: redis.asyncio.connection.Connection
     :members:
 
 
-Connection Pools
-****************
+连接池(Connection Pools)
+********************************
 
-See complete example: `here <examples/connection_examples.html>`__
+完整示例见： `这里 <examples/connection_examples.html>`__
 
 ConnectionPool
 ==============
 .. autoclass:: redis.connection.ConnectionPool
     :members:
 
-ConnectionPool (Async)
+ConnectionPool (异步)
 ======================
 .. autoclass:: redis.asyncio.connection.ConnectionPool
     :members:

@@ -6,21 +6,20 @@
 redis-py - Python Client for Redis
 ====================================
 
-Getting Started
+入门
 ****************
 
-`redis-py <https://pypi.org/project/redis>`_ requires a running Redis server, and Python 3.7+. See the `Redis
-quickstart <https://redis.io/topics/quickstart>`_ for Redis installation instructions.
+`redis-py <https://pypi.org/project/redis>`_ 需要一个正在运行的 Redis 服务器，并且要求 Python 版本为 3.7 以上。请参阅 `Redis 快速入门 <https://redis.io/topics/quickstart>`_ 获取 Redis 安装说明。
 
-redis-py can be installed using pip via ``pip install redis``.
+你可以通过 pip 来安装 `redis-py`：
+``pip install redis``。
 
+快速连接到 Redis
+********************
 
-Quickly connecting to redis
-***************************
+有两种快速连接 Redis 的方法。
 
-There are two quick ways to connect to Redis.
-
-**Assuming you run Redis on localhost:6379 (the default)**
+**假设你在 localhost:6379 上运行 Redis（默认端口）**
 
 .. code-block:: python
 
@@ -28,7 +27,7 @@ There are two quick ways to connect to Redis.
    r = redis.Redis()
    r.ping()
 
-**Running redis on foo.bar.com, port 12345**
+**在 foo.bar.com 上运行 Redis，端口为 12345**
 
 .. code-block:: python
 
@@ -36,7 +35,7 @@ There are two quick ways to connect to Redis.
    r = redis.Redis(host='foo.bar.com', port=12345)
    r.ping()
 
-**Another example with foo.bar.com, port 12345**
+**另一个使用 foo.bar.com 和端口 12345 的示例**
 
 .. code-block:: python
 
@@ -44,22 +43,23 @@ There are two quick ways to connect to Redis.
    r = redis.from_url('redis://foo.bar.com:12345')
    r.ping()
 
-After that, you probably want to `run redis commands <commands.html>`_.
+之后，你可能会想 `执行 Redis 命令 <commands.html>`_ 。
 
 .. toctree::
    :hidden:
 
    genindex
 
-Redis Command Functions
+Redis 命令函数
 ***********************
+
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
-   commands
-   redismodules
+   commands/index
+   redismodules/index
 
-Module Documentation
+模块文档
 ********************
 .. toctree::
    :maxdepth: 1
@@ -76,15 +76,15 @@ Module Documentation
    advanced_features
    examples
 
-Contributing
+贡献
 *************
 
-- `How to contribute <https://github.com/redis/redis-py/blob/master/CONTRIBUTING.md>`_
-- `Issue Tracker <https://github.com/redis/redis-py/issues>`_
-- `Source Code <https://github.com/redis/redis-py/>`_
-- `Release History <https://github.com/redis/redis-py/releases/>`_
+- `如何贡献 <https://github.com/redis/redis-py/blob/master/CONTRIBUTING.md>`_
+- `问题追踪 <https://github.com/redis/redis-py/issues>`_
+- `源代码 <https://github.com/redis/redis-py/>`_
+- `发布历史 <https://github.com/redis/redis-py/releases/>`_
 
-License
+许可证
 *******
 
-This project is licensed under the `MIT license <https://github.com/redis/redis-py/blob/master/LICENSE>`_.
+本项目根据 `MIT 许可证 <https://github.com/redis/redis-py/blob/master/LICENSE>`_ 获得许可。
