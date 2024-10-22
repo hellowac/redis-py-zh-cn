@@ -1,0 +1,903 @@
+<!doctype html>
+<html class="no-js" lang="zh-CN" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="索引" href="../genindex.html" /><link rel="search" title="搜索" href="../search.html" /><link rel="next" title="管道示例" href="pipeline_examples.html" /><link rel="prev" title="set 和 get 基本操作" href="set_and_get_examples.html" />
+
+    <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
+        <title>向量相似度(Vector Similarity) - redis-py 5.1.1 文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">redis-py 5.1.1 文档</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/logo-redis.svg" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">redis-py 5.1.1 文档</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="搜索" name="q" aria-label="搜索">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">索引</a></li>
+</ul>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../commands/index.html">Redis 命令</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Redis 命令</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../commands/core.html">核心命令(Core Commands)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../commands/sentinel.html">哨兵命令(Sentinel Commands)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../commands/cluster.html">Redis 集群命令(Cluster Commands)</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../redismodules/index.html">Redis 模块命令(Modules Commands)</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Redis 模块命令(Modules Commands)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../redismodules/bloom.html">RedisBloom 命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../redismodules/graph.html">RedisGraph 命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../redismodules/json.html">RedisJSON 命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../redismodules/search.html">RediSearch 命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../redismodules/timeseries.html">RedisTimeSeries 命令</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../connections.html">连接到 Redis (Connecting to Redis)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../clustering.html">集群(Clustering)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exceptions.html">异常(Exceptions)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../backoff.html">回退(Backoff)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lock.html">锁(Lock)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../retry.html">重试工具(Retry Helpers)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lua_scripting.html">Lua脚本(Lua Scripting)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../opentelemetry.html">集成 OpenTelemetry(Integrating)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resp3_features.html">RESP 3 功能(RESP 3 Features)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_features.html">高级功能(Advanced Features)</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../examples.html">Examples</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="connection_examples.html">连接示例(Connection Examples)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssl_connection_examples.html">SSL 连接示例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asyncio_examples.html">异步示例(Asyncio Examples)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="search_json_examples.html">索引 / 查询 JSON 文档</a></li>
+<li class="toctree-l2"><a class="reference internal" href="set_and_get_examples.html"><code class="docutils literal notranslate"><span class="pre">set</span></code> 和 <code class="docutils literal notranslate"><span class="pre">get</span></code> 基本操作</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">向量相似度(Vector Similarity)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline_examples.html">管道示例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timeseries_examples.html">时间序列(Timeseries)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="redis-stream-example.html">Redis 流示例(Stream Examples)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="redis-stream-example.html#流组(Stream-groups)">流组(Stream groups)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="opentelemetry_api_examples.html">OpenTelemetry Python API</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/redis/redis-py/blob/master/docs/examples/search_vector_similarity_examples.ipynb?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/redis/redis-py/edit/master/docs/examples/search_vector_similarity_examples.ipynb" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="向量相似度(Vector-Similarity)">
+<h1>向量相似度(Vector Similarity)<a class="headerlink" href="#向量相似度(Vector-Similarity)" title="Link to this heading">¶</a></h1>
+<p><strong>向量(Vectors)</strong>（也称为“嵌入(Embeddings)”）表示 AI 模型对文本、图像、音频、视频等非结构化数据的印象（或理解）。向量相似度搜索（VSS）是查找向量数据库中与给定查询向量相似的向量的过程。VSS 的常见用途包括推荐系统、图像和视频搜索、文档检索以及问答系统。</p>
+<section id="索引创建(Index-Creation)">
+<h2>索引创建(Index Creation)<a class="headerlink" href="#索引创建(Index-Creation)" title="Link to this heading">¶</a></h2>
+<p>在进行向量搜索之前，首先定义模式并创建索引。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">redis</span>
+<span class="kn">from</span> <span class="nn">redis.commands.search.field</span> <span class="kn">import</span> <span class="n">TagField</span><span class="p">,</span> <span class="n">VectorField</span>
+<span class="kn">from</span> <span class="nn">redis.commands.search.indexDefinition</span> <span class="kn">import</span> <span class="n">IndexDefinition</span><span class="p">,</span> <span class="n">IndexType</span>
+<span class="kn">from</span> <span class="nn">redis.commands.search.query</span> <span class="kn">import</span> <span class="n">Query</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">6379</span><span class="p">)</span>
+
+<span class="n">INDEX_NAME</span> <span class="o">=</span> <span class="s2">&quot;index&quot;</span>                              <span class="c1"># Vector Index Name</span>
+<span class="n">DOC_PREFIX</span> <span class="o">=</span> <span class="s2">&quot;doc:&quot;</span>                               <span class="c1"># RediSearch Key Prefix for the Index</span>
+
+<span class="k">def</span> <span class="nf">create_index</span><span class="p">(</span><span class="n">vector_dimensions</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># check to see if index exists</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">ft</span><span class="p">(</span><span class="n">INDEX_NAME</span><span class="p">)</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Index already exists!&quot;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="c1"># schema</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">TagField</span><span class="p">(</span><span class="s2">&quot;tag&quot;</span><span class="p">),</span>                       <span class="c1"># Tag Field Name</span>
+            <span class="n">VectorField</span><span class="p">(</span><span class="s2">&quot;vector&quot;</span><span class="p">,</span>                  <span class="c1"># Vector Field Name</span>
+                <span class="s2">&quot;FLAT&quot;</span><span class="p">,</span> <span class="p">{</span>                          <span class="c1"># Vector Index Type: FLAT or HNSW</span>
+                    <span class="s2">&quot;TYPE&quot;</span><span class="p">:</span> <span class="s2">&quot;FLOAT32&quot;</span><span class="p">,</span>             <span class="c1"># FLOAT32 or FLOAT64</span>
+                    <span class="s2">&quot;DIM&quot;</span><span class="p">:</span> <span class="n">vector_dimensions</span><span class="p">,</span>      <span class="c1"># Number of Vector Dimensions</span>
+                    <span class="s2">&quot;DISTANCE_METRIC&quot;</span><span class="p">:</span> <span class="s2">&quot;COSINE&quot;</span><span class="p">,</span>   <span class="c1"># Vector Search Distance Metric</span>
+                <span class="p">}</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># index Definition</span>
+        <span class="n">definition</span> <span class="o">=</span> <span class="n">IndexDefinition</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="p">[</span><span class="n">DOC_PREFIX</span><span class="p">],</span> <span class="n">index_type</span><span class="o">=</span><span class="n">IndexType</span><span class="o">.</span><span class="n">HASH</span><span class="p">)</span>
+
+        <span class="c1"># create Index</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">ft</span><span class="p">(</span><span class="n">INDEX_NAME</span><span class="p">)</span><span class="o">.</span><span class="n">create_index</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span> <span class="n">definition</span><span class="o">=</span><span class="n">definition</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>我们将从处理具有 1536 个维度的向量开始。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># define vector dimensions</span>
+<span class="n">VECTOR_DIMENSIONS</span> <span class="o">=</span> <span class="mi">1536</span>
+
+<span class="c1"># create the index</span>
+<span class="n">create_index</span><span class="p">(</span><span class="n">vector_dimensions</span><span class="o">=</span><span class="n">VECTOR_DIMENSIONS</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="将向量添加到-Redis">
+<h2>将向量添加到 Redis<a class="headerlink" href="#将向量添加到-Redis" title="Link to this heading">¶</a></h2>
+<p>接下来，我们使用 <code class="docutils literal notranslate"><span class="pre">hset</span></code> 将向量（虚拟数据）添加到 Redis。搜索索引监听键空间通知，并将包括任何以 <code class="docutils literal notranslate"><span class="pre">DOC_PREFIX</span></code> 为前缀写入的 HASH 对象。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">pip</span> install numpy
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># instantiate a redis pipeline</span>
+<span class="n">pipe</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">pipeline</span><span class="p">()</span>
+
+<span class="c1"># define some dummy data</span>
+<span class="n">objects</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;tag&quot;</span><span class="p">:</span> <span class="s2">&quot;foo&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;tag&quot;</span><span class="p">:</span> <span class="s2">&quot;foo&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;tag&quot;</span><span class="p">:</span> <span class="s2">&quot;bar&quot;</span><span class="p">},</span>
+<span class="p">]</span>
+
+<span class="c1"># write data</span>
+<span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">:</span>
+    <span class="c1"># define key</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;doc:</span><span class="si">{</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="c1"># create a random &quot;dummy&quot; vector</span>
+    <span class="n">obj</span><span class="p">[</span><span class="s2">&quot;vector&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">VECTOR_DIMENSIONS</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+    <span class="c1"># HSET</span>
+    <span class="n">pipe</span><span class="o">.</span><span class="n">hset</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="n">obj</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="搜索(Searching)">
+<h2>搜索(Searching)<a class="headerlink" href="#搜索(Searching)" title="Link to this heading">¶</a></h2>
+<p>您可以使用 <code class="docutils literal notranslate"><span class="pre">.ft(...).search(...)</span></code> 查询命令执行向量相似性搜索（VSS）查询。要使用 VSS 查询，您必须指定选项 <code class="docutils literal notranslate"><span class="pre">.dialect(2)</span></code>。</p>
+<p>Redis 支持两种类型的向量查询：<code class="docutils literal notranslate"><span class="pre">KNN</span></code>（最近邻）和 <code class="docutils literal notranslate"><span class="pre">Range</span></code>（范围）。<code class="docutils literal notranslate"><span class="pre">Hybrid</span></code> 查询可以在这两种设置中工作，结合传统搜索和 VSS 的元素。</p>
+<section id="KNN-查询">
+<h3>KNN 查询<a class="headerlink" href="#KNN-查询" title="Link to this heading">¶</a></h3>
+<p>KNN 查询用于根据给定的查询向量查找最相似的前 K 个向量。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">Query</span><span class="p">(</span><span class="s2">&quot;*=&gt;[KNN 2 @vector $vec as score]&quot;</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">sort_by</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">return_fields</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">return_field</span><span class="p">(</span><span class="s2">&quot;vector&quot;</span><span class="p">,</span> <span class="n">decode_field</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># return the vector field as bytes</span>
+     <span class="o">.</span><span class="n">paging</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">dialect</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">query_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;vec&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">VECTOR_DIMENSIONS</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="n">r</span><span class="o">.</span><span class="n">ft</span><span class="p">(</span><span class="n">INDEX_NAME</span><span class="p">)</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="p">)</span><span class="o">.</span><span class="n">docs</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[Document {&#39;id&#39;: &#39;doc:c&#39;, &#39;payload&#39;: None, &#39;score&#39;: &#39;0.251625061035&#39;, &#39;vector&#39;: b&#39;\xf8\x1ed?\xbf\t\x90&lt;\xfd\x9b\x10?\xe3\x1b\xed&gt;\xbc\xea%=lp\x1a&gt;\x11hC?\x84 :?\x8d\x7f\xe4&gt;\xfd\xff\x94&gt;n\x9c4?\x0e\x9fy?\xd6\x8a\x97&lt;\xf6\x0b&#34;?Kg\x99&gt;\xc4\xde0&gt;\xa5\r\xb9&gt;\xb0R(&gt;\xd3\x1d\xcd&gt;?\xab\xbb&gt;\x9cx\x0c?\xd7\xa3\x9e&gt;\xad\xee\xf4&lt;\x0c\x93\xf6&gt;aW\x0b?\xd8F0&lt;0\x9e(?\xc5Pn&gt;\x03\xf4\xb0&gt;B\xaay?\xa9~\x7f?Gh\x18&gt;\x15\x8e\xf1&gt;]\xc8\xea&gt;x\xc5\x9c&gt;\xa1\xeb&gt;?\xbb\n-?aDZ?\x92\x9bL&lt;4\xa4\r?\x1d\xe1\xcd&gt;cO\xa3&gt;\&#39;\xed&lt;?\x8a\x15\xf5&gt;vPk?\xa7\xdch?\x02\x14\x8a&gt;\xb6:\x07;O\x139?\x8d$5?^e5?\x06\x10\x89&gt;\x88+\xd2&gt;\xea\xb7\xa4&gt;\xf9\x0e-?\x9c\xbf\xb5&gt;\x81\x8e\x03?\x00\xc43?/\xdb\xfb&gt;\xe8\&#39;e&gt;\xbe\xaa9?\xf2\xe88?\x1b\xa8\x03&gt;\x91\x9fO?%\xb2;?\xb7}w?\xd0/\x08?\x1aD\x1c?\xf9E??\x9bB.?\x96)\x19?\x10a\xda&gt;+\xbfV&gt;\x83\xbd}&gt;\x0bTz&gt;\x82Mz?\xf0EY?:\x99\x19?&#34;\x1ep?\xafX\xcb&gt;*\xa0\x0c&gt;X\xf5\xb9&gt;\x8d\t8?Q\xba\xf4&gt;\x1e\x97x&gt;\xc0Q@?\xd2\x1a\xa6&gt;M\xed\xcf&gt;\x15\x90$&gt;\xb7\x99[?o\x84e?\x8a2P?\x8c\x92^?\&#39;\xe3\xd9&gt;@\x83(?E\x91V?\xad\x1b\xa8&gt;\xf5\xca=?\x0c\x10h?m8\xc0&gt;\xaf\xe4f?\xb9\xdcZ?\xce9\xdb&gt;\x9f|\xc1&gt;^\xa9B&gt;\xc3\xce_&gt;s\x93\xd4&lt;\x96\xd7\x02?\x10\t ?\x07\xb9:&gt;\x9f_\xa4=\xcb\xecK&gt;\xb2\xdes&gt;\x9f\x0b*?ln\x15&gt;\x0c;y?L\xe7a?:\x8fg?Hs\x17?`v\t?\xdf\xe8Q?1Od=4\x1c\xba&gt;\x1b\n8=;\x9f??\xbb\xa5X=kLL=u=4?\xdf\x17&lt;&gt;\x1b\x06\xb5&gt;\x91W\xc5&gt;H\nw?\xc8\x05N?w\xf5\xcf&gt;\xee^Y?\x14\x90\xd1;\xc7b&#34;&gt;\xfa\xeb_?y\xbb\x95&gt;\xef\xb66&gt;\xe4Pa?c-/?\x88\x9a\xf2=\xe9\x8b\t?fp\xda&gt;B\xcb\xef=\xd0\x1b\x99&gt;\x0e\xb2f?n\x82~&gt;\xd6e\xcb&gt;\x02\\a?\xcbR\x14?cY[?E\xfc\xe7&gt;0v\x14?\x0c\x1e\x07?`\x1f\xdc=\xb7\x1d\r&gt;v/4?\xaa\xb2\r?\xda\x89\xfa=c&gt;x&gt;\x01\xd2\xad&gt;\x04\xd3\xe6&gt;\xa7E\x9d=\xc0|_?\xcf\x96o?\x89dd?\xbb\xad&gt;?UL\&#39;&lt;\xf4$h&lt;\x9fO\x12?\x86*\xd4&gt;\xef\x8dU?\x02\xc9_=5\xf8.?\xe5\xf8\x11?\x96y\xec&gt;\x18S\xac&gt;BT\xec&lt;\xa4bu?\xa3v-?s\x8eq?\xc8\x99b?u\xf6\xc9=\xca\x9b*?\xb9O)?s\xa9\r?\x8d\xf6\x9d&gt; \xba/?\xe9\x7f\xb7&gt;\xd4}\xc3=C\x99a?\xf5\xf4\x1e=(\xb54?X\xe1_?\xd7\xa7a=\xe12:&gt;\xb1,\xb9&gt;R\x0b\x17;\xe7\xe8\x8a=Ew\x05?\x1a\x0es?\xdc&amp;w?\xe2J`?\xde\x9b\xd7&gt;\xb7\xbf\xb5&gt;\x9d\xbd\xdb&gt;\xb4\x10\x19?\xb10D?L_\xc2&gt;#\x0e\x8e&gt;o\x08\x05&gt;\xab\xec\x10?\xbd6)?\xd5i]?\xd4F\xe4=\x93I\xf3&gt;\xcdc\xd3&gt;\x1f\xb5\x11?\xab\xabW?\xden;?\x96h\xf1&lt;\x8d\xf1#?\xa4sA?\xac\x8d&lt;?\&#39;\xef\xa0&gt;?\x86.&gt; \xf9\t?g\xcc\x93=\xc2\x98I?\xcc\xc0P?\xdd9`?@\&#39;\xfa&gt;\xe4\x1c\xf5&gt;\xaa\xcfn&gt;|\xae\x10?\x1a\x9b\x1e?\x86\x10F?6\xc2\xaf&gt;$L\xf2&gt;\xfb\x0c\x8b&gt;\xbb\xb4\xb7&gt;{K\x98&gt; 1\x1a?\xd8N\x8c=h\x0cx?\xfd\x98\xe2=\xe5\x02,&gt;\x97p\x06?\xb6!\xe1&gt;\x95\xfc\x93&gt;\x8co\xf0&gt;\xa54\xfe&gt;\x94\xe7j?\x0c6\x13?\xba\xe0\xc1&gt;%ll?;\xafW?\xf9\xb9\x9d&gt;\xdd:N?SZ~&gt;:p$?1\x00z&gt;C$\xb9&gt;\x8c\xeaL?\x96|!?.6\xe9&gt;\xf2i\xf2&gt; \x0c(?\xb4|\x80&gt;Yx\x88&gt;\xd2 \xe6&gt;\xe1\x94\x00?\xc0\x88C?\x134\&#39;?Oy\x9f&gt;\xb5\xeaw?\x97X\&#39;?\xa3\x07\x07?\x94.h?B\xf5\xd1&gt;\xd9\xae2&gt;\xbf\x9e,?*w\xa3&gt;\xbe\x8e\x12?ZU&gt;?\x83\xaar?\xbe.\x82&gt;\x0e^^?\x07\xe4\xa2&gt;\x04dZ?#)\x1f?\xbd\x0f\xa0=\xac\x9e\xfe&gt;\xb1\x81B&gt;\x827a?\xcb\xfb\x08?\x04\xca\xa2&lt;7Zd?\xdau9?\xe6Z.?4\x96N?\xf6\xcaw&gt;+\xa64?p\xe3\xae&gt;\xaey\x95&gt;!H\xb7&gt;~!\xbe&gt;\xe1\x0eK&gt;\x98\xdaZ?\xe0\x0b\xbc&gt;\xdd\xc8??\x98\xaf &gt;o\x8d\x7f?\x16\xea\xa3&gt;r\x94F&gt;\xfb\xa5i?n\xf0\xdd&gt;u\x19e&gt;\xb3j\x1e=\xf7S\x0b?\xdaY\x0b?\xbd\x11\x9b&gt;\xa77\xa2&gt;\xcc^\xaf&gt;\xf9a\xa7&gt;\xc2N\x13?\xcbf\x12?\xb4\x1bK&gt;j\xb7L?\x99aS?\xeeyY?\x968\x82=R\x0e#&gt;`\xb9c={\nH?b\xb4\x14&gt;d\x02W?\xde\xd4\\&gt;\xe5\xb6F?&gt;\x96\xac&gt;\xc7`\x91&gt;?\x0e\xad&gt;]\x84\x02?\xac\x14{?(2\xad&gt;\x11\xdd\xf6=\xa0\xb5\xbf&gt;df\xad&gt;\xea\xe1\x04?B\x17:?k\xb8\xb6=|\xbft?\x84\x1f\x05&gt;\xab&amp;??\x156\xc2&gt;`Y\x02&gt;J!\x1f?\xc0\xce\x1a?-V2?\xe8\xfen?\xb58\x1c?\x91\x96\x94&gt;\xa1&#34;\x1e?K\xd5\x04?Gk\xa9&gt;\xf0\xd7\x03?{;l?\x88\xa5!&gt;t\x0e\r&gt;%E\xa8&gt;\n\x1cM?\x8b\xbfN?\xc9\x84\xea&gt;\xdb\xebd?\xe7\xe9G?-t\x9b&gt;\xb8\xc80?\xb7w&#34;?\xdcz1&gt;xT\xf2=\xb7\x12\xa1&gt;\x887\x95&gt;8\x19\xdf&gt;\xa9\xbbY?\x89w\x8d&gt;M\xb4r=\xd1~\x02?\xd1\xd6x?\x0c\xb7\x06?\xc1w\x17&gt;v\xba\xe4&gt;\x11\x16\xec&gt;\x9f\x8a\xc7&gt;r\xf0L?d_&gt;&gt;\x01TS?8\x9f\x0b&gt;RBd=&#34;\xc3\xe1;\x9f\xf7\x9c&gt;^\x1cg?\xc5\xee\n?N.&#34;?\x9d\x13\x8c=\x9e\x90W&gt;\&#39;\xf0&lt;&gt;&amp;\x86]?\xb6[\xe2&gt;\xf9S5&lt;N\xe0@&gt;\x1f\x1aN&gt;s\xbfL?\xbb\xec=?\xcf\x08C?\\M\xa8&gt;\xc7\xcf\xe3=\x84\xfe%&gt;d\&#39;\xdc&gt;5\xaa\xc6=\xf7A\xe9=VY^?\xb8\x84f=\xfa\x95L=\x95\xd7x?\xc0A\x9a&gt;\x9c\xa37?K\x8c]?B\xdb\xc5&gt;\xc5\x19\xed&gt;\xfa\x1f#?\xa2-\xf1&lt;\xc4\xf4B?\xfdQ}=7\x06k&gt;-\xa8\x88=4\xe3\xc7=\x91j[?\xaa\xe5I=\x8f\xeaf?\x97\x7f\x9d&gt;\xb8\x9c\x03?\xfc(\x1b?\xce\xe7\xd7&gt;\xf2\xc8X&gt;I\xa6}?\x8f\xb4E==\xb7.&gt;\xd8\n\x18?\xb4\xc1C?\x8f\x16q?\x88C]&gt;\x06\x99\x0e?mz\x93&gt;\xd1\xb2\x18?(\xb8r?\xe7\xcb\xab&gt;{\x87F=\x9a?\x1a?\x86\x82$?\xf9\x0b\xe9&gt;\x85\xa05? X5?\xec&lt;K?\x81\x115?\xc4\x0e^?\xc3\x1a\x04=H\x0f\xfa&gt;5&amp;)?x\xf1G?q\xfc\x91&gt;\&#39;\xd7\x1a&gt;s\x14A&gt;\xe3\xb1\xe0&gt;Sk\x0c?\x14\x973?\x15\xc7\xd7&gt;z*4?\x14Hq?\x1f\x83\xe8&gt;\x01\xd5.=\x17\xde\x08?z\x1d`&gt;o\x14/&gt;\xd1\xbcA&gt;8G0&gt;\xf2Hh?\xdc\xdfd=\xe9R&#34;?\xfb\xa7~?\xd2\xae\x06=\xe8y\xd6&gt;\xc0\xb7\x8c=\xbc\xe9\x03?\xae\x10\x0f?3rh?N\xacf?\xb5\xfd\x06=\xc5\xf6r&gt;\x8c\\\xfc&gt;\xa2I\xd7&gt;\xb6T`?Hn0&gt;V#3&gt;\xf7\xc9C=\xdaR\xa4=\xfdPh&gt;\x18\xe4&amp;?k}1&gt;\x0e\xbdB?\xb7r|?\xf7\xb9\x17?K\x10\xd8&gt;\xd8f\xa9&gt;\xf6,D?,\x1a\xab&gt;\xf2*w?\xd6\xa0\x1d&gt;q\xcd\xf5&gt;\x01\xf6j?G\xe1q&gt;\xd3D\xc0&gt;\x9a!\xdb&gt;\x81_\xe6&gt;\xea\xa8\&#39;&gt;f\xa1W&gt;\xcdzI?O|,&gt;\xfa\xc5}&gt;\xbc# ?F\xfd9&gt;K\xd0\xa2&gt;&#34;\x06i?&gt;\x9bm?c\xe2\xd8&gt;\x11\xca\xf1=\x06\x08E?\xf2\x0cQ?+\x8d\xfe&gt;`\xb0\xfc&gt;K_\x18&lt;\x02\x13g?hx\xd0&gt;\x9a\x8b\xf3&gt;d\x99H&gt;\xcd\x9d)&gt;P\xb4\x84&gt;\xea\x16o?\x18\x9fD?\x16\xa2&#34;&gt;)\xc4|?\tIr?\xdf\xd9\x9a&gt;!\xebu?p:\x0b?X3\xca&gt;\x84\xa9g&gt;\xef\x9d\x8e&gt;\x1ekt?\xe1\xa5N?]\xbe\x06?h\xc8\x9e&gt;\xb0(\x12?\xe1A\xa4&gt;V\xefY&lt;:\x19\xc5&gt;O\xeb1?\xd0P\x10?\x1feT?U7x?\x96]t?\xbd\x82c?\xe1\x87+?\xbcVi?6\&#39;+?\xc3PL?A\x1aR=\x1a-]?\xd8\xae\x1e?\x12K&gt;?\xfc\x00\xf4&gt;\xc5&#34;\xf3=\x17\xc0\xa4=\xe6G\x1b=\x0f\xdcP?\x1d*\xe4&gt;pw\x97&gt;\xe8v\x13?\xf00\r?\n\xd0J&gt;\x87~\xa6=k/^?\x1f\xe5\xe3:V\xbc??\xb4\x81=&gt;;\xd4,?]F#?0D\x07?\xb8\xe7=&gt;\xba\x0fC?\x0fe\x8d&gt;I\x80(?\xa4\x9e\t?\x12\xaaJ?\xdca6&gt;!Uc&gt;}\x0c&lt;?\xcf\x11|?\x08\x1f%?\x00\xbf\xed&gt;\xc3\xcd\x8b&lt;\x02\nG?\x0eFY?\x03\xc4\\?\xce\x96\x95&gt;\xb9\xa95?\xc4)\xb0&lt;z\xfbR?\x9cQ\&#39;?\xa8\x12??\xee\xa8\x17?8\x02\xcf&gt;\xdf[R&gt;\x87\xd24?\x1fSk?\x03\xbdG=\x18o6?x\xdf\x1c&gt;\x10Sc?=\x06\x82&gt;j\xee^?\x96\xc8\x8c&gt;L\xf7&#34;?;\xb4e?H\xfbY&gt;\xa6\x14\xfc;\x9d0\x12?R\xab\xd9&gt;\x06\x8d\&#39;?\x7f%\xc6&gt;\xc4;Z&gt;\xeb\xaba?}\x92\x12&gt;P\xdcq&gt;\x93\xa4\x14?7\x8b\xb0&gt;\xf2um=\xc9Q\xe8=\x08\xdag?e\x13j?j\xefL?\x1eeN?s;\xff&gt;\xc5r\x02?\x86@w?\xb8\x00r&gt;#-b?\x87\xc36&gt;%\x93f?\x88\xd8 ?d\xa3d?\xb0\xe2z?b\xb3\xb7&gt;\xban\xaf=\xcf\xaaE&gt;_J\xde&gt;\x80\xa6\x1b?\xd1@\xd8&gt;670&gt;\x11k\xc5&gt;\xfb\x05\xd4&gt;\xb0\x98N?\xcem\x9f=\xbd\xc8r?+\xcd\xc4&lt;&#34;\xebN&gt;J\x0f\xb2&gt;\xec\xb4E?\x807\xef&gt;\xbc\xa2&gt;?;\\\x12?fM\t?\x04}\x19?:\xff\xa6&gt;\xd5\xe3\x96&gt;\x1cX\xcf&gt;\x89\x19\xe8=\xedc??\x00\x18^?\xe7\x0e\xd9&gt;L\x00i?g\x1a(?1P\x12?\xb8\x16L?E\x97N&gt;\xa4\xe6\xbc&gt;\x18\x02\xa8&gt;\xbc\x12f?r[\xd5&gt;5Ii&gt;\xc2\x1b\xe3&gt;\x14\xc6\x13?\xc3{L?\x7fY\xbb&gt;\xbcq\xc3=XR\xfd&gt;A\xcf&lt;?\x1f\xd3@?\x94\xcaq&gt;@@\x88&gt;\xbf\xe0\xd4&gt;\xa2\xb1??wP\xc1=\xd8\xdc\x17?\xe7\xcc??]\xc6 ?%\xd5\x1d?\x9f\x94a?\x1b\xcf1&gt;R\xcf&#34;&gt;l\xa7{&gt;\xe8Df&lt;\xc5\x02L?\xa8\xc9&#34;?\x12\x17\x0f?\xd3\x17\x06?2AE?\x1a\xd9\xc0=\xac\x06h&gt;\\\&#39;\x10?H\xb2\x1e&gt;\xe3=S?E\xee&#34;?J\xa2\x02=,l&gt;?\xa1\x97\x83=s\xf3-?/\x04~?\xa2\xac\x9b&gt;k\xaa\x1a&lt;\xe0\x1c\x06?\x00\xa1s?&gt;\x8f\xe1=\n\x9f\xd7=\xd0\xc1\xc1=\xf0\xf1R?\x99$q&gt;l#b?\x9b\xe6\xd8&gt;\xfe\xa2\x1e?\xd8\xdb\x9b&gt;R\x86L?\x95m\xff=\xd8#\x0c?\xd77\xd7&gt;\x83_\xbf&gt;\xece9&gt;\xbc\xe8\xac&lt;q\x00~&gt;E\x0ei?\x01Kg?m\xa1/?\xe8n\x8f&gt;\xc9@\xb1&gt;\t\xdb&amp;&gt;\x84\r\t?\x9a\xa4=?\xce \x10?\x91\xae\xcf&gt;Db\xce&gt;vB\xc8&gt;\xd9\xffs?X\x83\xec=\xbf)\x18?;\xde\xa0&gt;\x19\xac\x14?\x99\xe6\xed&gt;t\x17r&gt;!g\x03?BD\x86&gt;\xe7\xcbk?\xd8\xa2B?\xcd\xc7\x01&gt;m\xc4s?\xf0)\xdb&gt;xuG?\x10\xd8\x10?;\x04+&gt;-`e?\xc4\xf7\xa8&gt;\xf9\x86\x80=\x04\x11M?\x9e\xe9\x16?:\xe2U?W$\x93&gt;\xf7\xbc{?\xa7\x02E?\x95\xf3\&#39;&gt;\xcd\xb0\x0b&gt;\xe2\x0b\xa3&gt;\xbe4V&gt;\x1fJ.?\xbayg?\x0c\x15\x1d&gt;\xfcQn&gt;\x13\xb6\x91&gt;\xad\x01]?\xbcMb?Yw:?,\xed\x81&gt;\xaf\x87\xeb=\xed?\xd6&gt;\x8cQP?a\x89C?\xb9S*?\xf5\xcb&amp;?1\xc4\xcc&gt;%J\x80&gt;Du\x16=\x05\xd6$&gt;u\x8e\xe0&gt;\xd6\x81L?\xa6\xac\x10?\r\x11i?\xb2~2?\xa5\xca]?\xfa}\xc4&gt;\xc5m5?3R3?\xdb\x13\xdb=\xb3\xa0[?\xf0\xc4V?\xe3\x97\&#39;&gt;\xa0\xf1\x16?=W\xf5=\x17O\xfc&gt;\xf1I\xcd&gt;H\x05r=(kg&gt;EE5&gt;)f3?U\xae\xed&gt;\xdd\xe0\x9e&gt;\x9b4#?`E(?-\xcdA?\xba\x81D&gt;\x87bk?Kr\xf2&gt;\x88\x15+=\xc16\xe6&gt;\x93\x05\xa1&gt;\xbf\x7f}&gt;\xb72*?\x0f\xb4;?8\xc3f&gt;{\xff\x00?A&amp;\xfd&gt;+g\xdf&gt;\xc0\xbf7?\x86\xd9F?~dk?\xc7\\e&gt;\xff\x99\xf4&gt;\xfc\x11\x8b=\xfdda?w\xa7\xae=w\xa8\xfc=\xe7\x10\x02?\xfa*E?\x93L\x1f?&gt;\x8dD?\xdd\xed\x9d&gt;\xb1\x8bQ?\x0eV\x99=F\x7f|?m\x10\xd8&gt;V\xe0\x17&gt;\x9b\xca#?h\x83\xd7&gt;\xa4vX&gt;\xec\xce7?\xa5\xf6\x15?\xe5\x9e\xbf&gt;|\x85\xfb&gt;)7\xf4&gt;\xc5\r\x1e?\x89\xde5=\x9f\xc66?\\\x8e\r?\xde\xb58&gt;JXe?\xcd\xe1\xc3&gt;\x9f.p&gt;\nCw?\xd4\x01p&gt;\x81\\\&#39;?\xa4\x8f\\&gt;\x89\xf1\x84;\xf5\xdfu?\xed\x19\xd9&gt;\x03~\xf9&gt;\x8b\xfb\xca=$\xe4\xb2&gt;\xdb\x92\x01&gt;\xd0\x90:?Le\xff:\x84\&#39;\xef=0QM?\xaf\x01x?\xb7C\n?\xc8\xb9(?qea?\x1f\xbe\x17?\x86\x0b\xdb&gt;\x9f&amp;\x08&gt;A\xeb\xc8=~\xc9\xa8&gt;\xd08\x88&gt;\x87\x88O?j\x96&gt;?x5l&gt;\xdf\x8f(?\xd4[a?}T\x07?\xb8\x0c1?V\x8fl&gt;&gt;,F?8\x8a$?\x01\xf6+?9\xfd\xeb&gt;\r\xf0:&gt;\x13\xd8~=u\xb0{&gt;;\xcc\x11?\x94I\xb3&gt;\xcf\x87\xcb&lt;\x82\xdc\xa6&gt;\xb3\xda\x03?G\x92,?\xc4\xcaG?@\xabV?\x86\xb1\xff&gt;G\x82%?\x93m\xe7&gt;\xb6\xb4\xd0&lt;\xc1^Z?M\x06g&gt;\xf7]G&gt;\x92/\x87&gt;\x03\xe4e?1\xb4\xe9&gt;\x12%\r?\xa7)\x89=/\x18O?\xfcW\xf7&gt;\xa1\xdb\x17?\xd7@\x11?\x04\xea\xeb&gt;_\x912?\x0bK\xd8=\xabat?\x89\xc5\xdc&gt;\x93\xc1\xe0&lt;0\x91\x07?\xa2H\xec&gt;\x16E5?&#34;\xfb]?&lt;p\r?y\xa7s?-\x93\x07&gt;iX\xcd&gt;t\x7f\xe8&gt;\xc7\x88\x80&gt;u\xaf\x11?\xb4`\x02=\xf1\xe6\xb8&gt;.\xd7;?\xeb\xe82&gt;KO\x8d&gt;\xc7\t)?\x86\xd7\xed&gt;z\xf99?\&#39;\xf8b?\xaa\x1bC=\x7f9`?tGi?Kc\xf8&gt;\x97\x96a&gt;\x03\x82\xba&gt;\xfc\r\x85&gt;\xbb\xd3u?j\xb7&lt;?&gt;\xf8\x81&gt;\xd9\x16+?g\xdc\xb7&gt;P\x00q?\x1b\x81+&gt;g\xbea?\xcf\x9b\xe6&gt;O\xab\xbf&gt;S\xe1{?\x18\xec\x85&gt;\x92\xc5&gt;?e\xe8J&gt;\xc7\xf2\xbf&gt;\xbc\xf7\x06?\xc0\x91?&gt;$\x18&gt;?\xdc\x8d&#34;&gt;]\x1c\xa5&gt;\xb7!l?\x94\xf4\xb2=8\x05b?\xf9j\x02?1\x1b\x9a&gt;\x01O\x05?\xef\xcb.?\xb7\xe0\xeb&gt;\x872H?\x7f\x1a\xb6&gt;Q\xc4P?F+3?X\xab2?^E+?\xaaK\xaa&gt;\xa5\xbf\xbe=\xc3F\&#39;?\xcc\xb2M&gt;q\xd4.?s\xf9K?e\x0es&gt;\xa2]\x1c?~h\xa5=\x8d\x81;?\x95\xd7\x19?\x9f\xbd\x7f?:\x00f?\x1c\x19\x12&gt;1\xd2\x80=\x81\xb1\x06?\x83\x9bb&gt;5\x8f\xae&gt;-\x9d\x1d&gt;\xf4\x89b?z\xfdT&gt;\xf0n`?,\xba2?\xbe\&#39;\x1d?\xc6\n\xb1&gt;J\xd0k?\xa4\xfcq&gt;\xd4\x02\&#39;??@\xaa&gt;\xc5\xfc\x93&gt;\x8f\x12y&gt;s\xa1\xc7&gt;\xfa\x15J&gt;\x13\x90X&gt;\x9c\x0cp&gt;\xe5\xd0\xf9&gt;p\xb0\xad&gt;Ef\xb3&gt;4\xb1L?^\xa3\x87&gt;_\x8c\x05?:lE&lt;\xfc\xf8w?u\x12\x8a&gt;W5\xf7&gt;\xcb\xb8{=s\xa7\xc9&gt;K\x88P?\x93\\\x93&gt;\xb0\xed\x03?\xdb|-?\xb8U\x1c?\xe1!&lt;? \xc6\x94&gt;n\xcec&gt;m\xa6K&gt;.\xd3Y?\xeeN\x12&gt;\x89\xa8@?\x80\xeaO?*l\x7f?\xa9\xe6\xc0&gt;$F\xcc&gt;\xf3\x8e\xd1&gt;9\x98\xcd=6n\x01?\xd8\x1et?+\xb3I?\x9d\xdc\x11?\xc5v\x10?%\xda:&gt;\xbfC\x17&gt;\xda\x85\xb8=*\xceO?3eS&gt;\xff\x1c1?fs\x1e&lt;\xa12\xce&gt;\xecB\xbf&gt;\xb9$,?\xfa\xe6N&gt;\xdc\xb1H?\xf2\x07\\&gt;\xc6\x9e\xf0&gt;\xce\x18L?K\xc1\x13&gt;x\xd5)?F{q?\xe7f.?S\x02!&gt;39.?\x19c\xaa&gt;}\x9bs&gt;\xcf\x1fx?D\xf3\xd8&gt;!!H?\xa7uD?\x8c\x9e\\?\xb5\x1dY?f\xb0\x04=\x90\xda\xd1&gt;\xd2\x13\r?\x92{\xcb&lt;\xa1\xf4L?\xedh^&gt;\xe6\xe5o?\x86\xe49?oS\x1d=sWs&gt;\xb0c\xad&gt;\x94\x1e\xd5=)\xdf\x12?\xb5A\x1c&gt;\x11\xda{?\xd5+\n?\xd1G\xe4&gt;\xdf^7&gt;\x9e-\xc7=]\xbbp?\x88\x97\xaa=\xfc\xb3y?J\x0c\x0e&gt;\x83\xa0\x89&gt;\xfeEQ?\x93H\xd9&gt;\rZ\x19?\xfc\xe2\xf5=\x93d\x0e?!\xb1\t?\xaat\x19?\xce\xc2\xdf&lt;C\x1c\x9d&gt;s\x8fd?\x17\xd53&gt;\x01\xcd\xd0&gt;\x86\xbfD?\xdbD\x1a?\x17\x81\xac&gt;\xfb.#&gt;\xfe\xfd\x15?\xb8\xa0\x00?TnZ&gt;Q\xd0\x15?\&#39;y\x13?\x04\xca\xe4&gt;^\xc4\xb6=\xa9$]?7\xc1\x9f&gt;S\xbf\xc8&gt;\xa7=k?2\xf7D?%\x03c?O\x99l?\xd4]\xa0=K(\xda&gt;\xa6\x90]?2&lt;\x13?\xb4\x16a?y\x80h?k\xed\xd8&gt;D\xa1\xa7&gt;\xae\xc4\x1f?\xe5|\x05?\xc9g\xe6&gt;\xfc4\n?\xd9\xaf\xf9&gt;\x10@\xf1=% \xe2=\xb5\xae\x1a?\xedv\x8b&lt;\x98\x01~&gt;\x81\xb4\x13?\xa4N\xe6=\xb69-?za\r?\xc6\x00A?\x97\xf2k?\xa7\x06U?\x91\xbfs?\xfd\xa6\xf6=K\xf8=?|\xea\xd3&gt;\xa7\xaa.&gt;\x12\x08F=\xa2\xcd\xf4=\x8doh?\xb8\xe7q?gt7&gt;\x03\x91C?ML\x03?\xe7m/?=B\x06?\xe3\xd2E&gt;P\x1c\x10&gt;uH\\?|\xafH?\xa2\x82|?\xad\x99\x14?6\xb2V&gt;\xe9)\xa8&lt;\x04\xf3\x04?B\xa1$?ne\xc5&gt;\x96\xb2/?\xb0&amp;\xa9=\x8f`\xaa=\xce-\x03=\xbc\x10\xdd&gt;!\x16g&gt;[R\x04?&#34;\xa3F?\x83\xd6B?Z\xefC?\x85yX?%o\xa4&gt;z\x19}?\xf7\xcf\x92=\xf7b\x9b&gt;\x8cG\xcc&gt;\xfeY8?\xd8\x86\xac&gt;\xb3al?\x00\xf5\n?t\xfcx?B\xe7\xe7&gt;W\xb8\xb5=K\xedv?(:I?\x82\x9a\&#39;?\xe3\xef$&gt;fW\xdd&gt;\xf9\x81Q;P\x9a\&#39;?\xfak-?\x1b=+?P\x11E?\xcbG\x07?\x90\xcc\x9f&gt;4W\xfc&gt;E#\xa5&gt;\x08\xf1V?-o\xf7&gt;%W#?\xfd\xda\xa9=*\xab\r&gt;\xb5\x1a\xd1:\xbb\x89Z?1\xa4Q?*\xc7\x05?\xe0u.=S\xbe\x08?\x1c\xe9\xc7&gt; \x95\x9d&gt;\x84\x03+?\x1a9A?\xcb\xb8\xa1&gt;\xfb\xa1\x84=\xac\xadc?\xe5\xca\x81&gt;\xec\x07/?\xc9\xe0p?(TU?\xef\xefP?\xec\xce|&gt;:\xc5\x17?\x1a\x89\x9c&gt;\xab\&#39;F?,\x9eR?\x8d;\xb3&gt;Z {?\xa8\xee\xbb&gt;|\x81m?=\xf4`&gt;\x01\xea\x9e&gt;q68?Xcj?T\x04\x1e?\xb1\x13$?\x88\xea\x9b&gt;\xa8\x83\x08?h\xffd?Vw\n?\x07\x93h?424?_\x1b\xf9&gt;r\xcf]?L\t\xdc&gt;i\xc9q?$B\xce&gt;\xb8\xc6\xb1&gt;\x01\xe5\xa3&lt;\xd6z\x9b&gt;\x15\xecn?\x96\x0c&lt;&gt;7\xa2\x96&gt;\xe1:=?2\x03\xe9&gt;oPr?\x85\x9b\xac&gt;r7\xf3=\xe0^\x0c&gt;\xefk\r&gt;f\xac8?\xbc\xe5\x11?1kS?\xd9\xd3\x1a&gt;M\xfe\\?\xb3J\x14=\x90\xba@?\x98\xfc\x8b&gt;\x01\x8d,?&gt;\x13{?\x0bb4?\x9b\xc7\xd4&gt;b\x16\x99&gt;^9;?T\xec\xd3:^*K?\x1b.\x05?\xa3\xb1\x88&gt;-\xb2\\?\xa9\xd3\xba&gt;y\xda\xb8=\xc2{\&#39;?\x95A0?j\x80S?yB\xe1&gt;:\xa4T=Q\x01y&gt;\xa3-l&gt;-\x08\x19?\xe5\xe6\x08&gt;q\x0e1?\xe7wG?\xcbs$?pH)?\x9b\xb8\xe6:\xad\xc8I&gt;\x8a\x9ad?\xff\xcet?\xaa\x1f\xce&gt;\x92U\xfc&gt;\xe1\xb4V&gt;,T8?\xbbR+&gt;\xf0\xc7a&gt;\xd8\xa1\x90&gt;\x14\xc7b?RFP?6Ps?\xd1G8&gt;\xbcQA&gt;4\x99\xbb&gt;0\xfd\xda=\x89\xdc~?l%R?\xb8\x05\x1e?\x0cS3&gt;\x1c\x8aU?y\xb2P?\x15\x97\xe7&gt;5\x91G?8C\xa5&gt;c\x8e\x0e?\\UP?;4m&gt;6\x024?\x11\xed\x87&gt;}H7?f\x8e&amp;?+\xe4\xc0&gt;\x11\xfdL?\x94\xf1\xef&gt;\xea\xa3\x08?1h\xfa&gt;\xed\xfdJ?*\x13:?\x16:\xe0&gt;\x0c\xd8\x14?\xb9\x1ej?(\x8c\x94=\xce\xe6\xa3&gt;F\x14\x99&gt;r\xf8T?\xa5~\xca=t\xe7e?\xfc\xbd\xc6&gt;+\x8c\x08?\x88\x99b?\xb7\x02|?B\xa8\x87&lt;*\x0f\xea&gt;\xf6\xc8~&gt;\x9b\x92[?\xdcO\xa2&lt;\xa6=Q&gt;\x9a\xfbl?\xa5\x89\xb0&gt;\xf0f\xd5&gt;v1/?S\xbd3?\xb9\xc5D?\xc5\x0f\xff&gt;\x07\x043?\x08\x05\x12?&amp;\xc3G?#\xcb\xb6&gt;$\xf3h&gt;\xf6\xd1\\?z\x85\x03?I-\x1b?I\xf8\xb1&gt;\n*\xb9&gt;\x82\xcd\x1b&gt;\x11A\xd9&gt;VE(?v\xd2\xa4&gt;\xf0\x8f\xc3=a\x89\x7f&gt;\xbcF\x9f&gt;\xe5\x97\x81&gt;&amp;\x1eI?\x1f[\xab=r\xac\x1a;\xd6\x16\x1a?\x06\xfa\&#39;?[\xc1\x13&gt;\x1el(?\x971\xd5&gt;)\xbc\x85&gt;|\xe3;?@KB?\x99\x17\x13=\x1a\x9dP?\x92\nR&gt;c\r}?1+\xfd&gt;\xb61&amp;?\xd7o@?\x0cP5?\xcf\r\x08&gt;\x06Qo?\xa2\xe2Z?\xa5\xccY&gt;X\xda\xdb&gt;]\x8a9?\xbc&gt;u?\xfc\xcc-&gt;!\xe27?\xec\xd4Y?\xabj^&gt;v\xa7W?\xeb\xa52?\xbb\x10$?\xa3\xf3;?BOw?\xc6=p=\xadU}?\x14\x9a\x03?\xc8)\x01?\xa7\r\xa1&gt;\xfdKX?\xcf\xab\xcd&gt;\x0ecE&gt;\x88Ox?bx%?\xe8sg?\xa1\xb2d?\xed|\x98&gt;/p\xa1&gt;\x90b\x0c&gt;Rd#?\xde\xda_?\x1a\&#39;\xf7&gt;y\xaf:?%`\xe7&gt;\x99_+?6\x8a\x08?\x19YJ?\xc1\xb1\xd9&gt;PF\xe2=\xd4\x8a\x1b?\x1f\x18\xa5&gt;.\x94&lt;?\xc3T\x1b?VVu&gt;\xd5\xe0\xfd&gt;VC\x17?BE\x0b=\x9a\xf7\xe1&gt;CTK&gt;\x97\x92d?\xec\x1f\x1b?\xe0\xc7J?\x9b\xef\x13?\xdd\x8e\x0b?q\xb1a?\x07Tt?\x91\xa7\xe9=(\xe3\xaa&gt;\x04\x8e[&gt;?\x19\xc8&gt;(\x10\x9f=d[}?\xf2\xba\xa5&gt;N~\xd4;98$?DG\xc8&lt;3\x026??\x99e?&#39;},
+ Document {&#39;id&#39;: &#39;doc:b&#39;, &#39;payload&#39;: None, &#39;score&#39;: &#39;0.253424823284&#39;, &#39;vector&#39;: b&#39;1\x16\xe9&gt;\x9cax?z\xc6c?\x92\xa2%?\xcdk\x9c&gt;\xa3|\x8a&gt;#L\xec&gt;\xc9\xca\xf0;\xce\x1d\x1a?\x12\xe4\xab&gt;h\x88\xe4&gt;\x9a\xb4\xe8&gt;\xb7\x03\xdc=\xf2*l?\xe7\xe1,?(;p?\xceL\x13?\xf5\xfd\xdc=\x19\x92\x84=7\xe1\x7f?\xb7\x898?yR@?\xa4\x1cp?S\xde\xb1&gt;5#\xf4&gt;F4\xc4&gt;\x14R\x18&gt;&lt;W\x0b&gt;\xb8n:?/%A?NEU?tu\x0e?\x85\xe8\x88&gt;e\x04\x1b?T\xed4?\x08\xea\x03?\x98\x16p?\x0f\xa4\xfa&gt;$\xb5O&gt;\x9b\xb0~?\x94\xab\xbc&gt;\xa0\xe6G?\x1f\x8bz?s\xca-?\x03\x9e\xb3&gt;\xb4|\xd1=\xf0Z_&lt;\x1a\xe3:?\x06q]&gt;\x02\x0b\x9c&gt;\xdcZ\x1a?L\xb0\xcc=E^\x1a?\x05~\x03?m\xea\x15?\xc4r]?\x0c&#34;\x89&gt;\x9c\xb78?\x87\xf3\x8f&gt;+e\xc0&gt;\x16\xe3@?\xa5\x85M=jq\x12&gt;5.`=T\xac&amp;?\xc7\x91\xb8&gt;\x93\x9cs?\xb1\t\xfa=\xb2\xdfd?#\x8cO?zX&amp;?R*\x05?\x90\x9f\xf7=\x83\x9c\x02=AY\x1d?m$w?\xa6\xc4\x80&gt;\xfd\xceH?\x87\xbaK&gt;\xca\t\xf8&lt;{\x1c\xf5=L\xf9a?TB ?\xae\xcd\xb2=\xd0*\xe9=\x92\x88[?[\x06F?\xb4\xffu?Y{\xbc&gt;\xba\x8bU?z,\r&gt;d\x7fE?\xcd\x85\xb4&gt;m\x91\x9a&gt;z\xa5N?7\xd5\x8a&gt;\x8a\xfbA&gt;n\xa2,&gt;\xf9j\x04?\xe8\x84\\&gt;\xb4A=&gt;\xe8v\xde&gt;\x19\xbaX?\x1d\xd3E?\x90\xcf\x9f=\&#39;\x18w?\xbd:\&#39;?1C\x17?\xac\xaeJ?ae\xef&gt;\xc8_v?\xe8\xfcP?/\x96S?E\x16D?2\xf4~=\xcaV\x1f&gt;\xef\xdb\x1a?\x87)\x11?:6\xfd&gt;uLk?\x9ddT?\x02gc?\xc7A&#34;&lt;\x87\x18v?x\xec8?\x84\xad\xf4=\x0cj\xf6&gt;\x04\xa0\xaf=\xa5\x12\xf0&gt;\xda\x98}?kB\xab&gt;\xd2\t\x9c&gt;\xf0\x90\x8c&gt;\xbe,9?\x1b&gt;S?J\x17[?+\xb2k?\xbdO\xf9=\xb8\xdd\xaa&gt;\xbc\xbc\x1a?\x98\xa3&amp;=\xdbo\x1b?*\x1c\x17?\xacP\n?\x15\x99\xfb=D\xd6s?\x97:~?\x83\x97H:\x814\r?\x1d\xbdt?\x98\t\x0e?\x10\xbd\xf6&gt;\xad)\x80=(\x8b!&gt;Th\x1e?\xfaOX?\xd835?\x00\x8c\x03?9\xf1\xa7=\x80\xbd\x12?*\t\x19?F\xa7\xd2&gt;\x0e\x9c\x1f?\x8d\xed\xf9&gt;\x8bD\xea&gt;\xdb\xe4+?\xb3%\x12?h\xd0F=R\xb5\xc7&gt;\xaf\x99\xe8=\xda\xe4\xe6=J\x073?4;\x1c?|e\xf6=\x99\x8e!?\xdeJ\x9d&gt;5\xa2j&gt;\x06\xdf ?\x99\x85\xfb=A\xcce?z\x19M?\x1f\xccA?\xb3\xea)?Ex\xf7&gt;4\x15%=\xe4\xe1(?C\xe0~?;\x9a\x19?\xe2A.?@\x82\x1a&gt;\xf2\x909?\xcb\x18\xfe&gt;\x87\xff\x11?\xd0-H?h\xd9K?Bps?K\x9b\x0b?|%u?\x1b\xcd\n?\xbb\xdb\xb9&gt;]\xd0\\?\xbee\xb5&gt;*\x9f\x9b=\x8f\x1b\x7f?O\xf8N&gt;\x91\xf2b=\x9a\xe5\xcc=5\xf3o?\x86\x83\xbc&gt;9\xaeG&gt;#\xd4\xbe=\xa9m\x85=\xc3\xa7\xf3&lt;\xf6\xb3\xed&gt;\x94\xcc\x98&gt;\xb7m\x12?\x19\xbaq?\xae\x96Z?g\xa2\x11?j9\xc2&gt;/\xc2f=&amp;\xcf??\xdc\xado?\x01d\x1f?B\xb8U?t\\b?\xc0W\x9c&gt;r\xeb}?\xef\xc9\xe6=\xaf{#?\x89BW?S\xffO?\x8e\xaa\x03?\xfb\xf1\xb5&gt;0\x89\x81&gt;\x96\xed\r?\x88W\xf6&gt;\xe5ZG&gt;\x122\x14?\xe8\x0e\x91&gt;\x1a\xc2\xf4&gt;\x15&#34;Q?\x8c\x87\xa0&gt;\\d\xa7&gt;p\x94-?\xe2\xe5\x17?\x8f\xe5\xdd=\xb9\x04#&gt;_\x9fU?\xd8\x0cL&gt;2Jn?1\xa7\\&gt;\xebT\xe4&gt;NT\x9c&gt;B6\x0e?_\x0fS=\xb6\xcdR&lt;\x96\xb2\xc9&gt;\xbc\xf6\xe2&gt;^\x8f\xa2&lt;\x95\x93\xee=\xf3\xc0C&gt;\xfdw\xd1&gt;\xbc\xba\xf5&gt;\x8b\x13Q?\xa5_\xaf&gt;\xa9\xb0W?\x1bWd&gt;!\xa8\xf8&gt;\x9d\x87\x17?\x84.\x01?G&lt;\x10?\xf6^\xc9=\x8a\x87g?\xae\xc61?\xcbn]&gt;\xe9\xf9+&gt;\x1b\x01\x99&gt;\xcd\x02\x86&gt;\xeb\xe0y?\t.4&gt;\xa4\xb2\x01?;4]=}&#34;\xde&gt;&#34;\xf5n&gt;{\xe7\r&gt;\xbb\x03G??8\x18&gt;\x96\xd1$?\xed\xa2\xcc=\x8d\xef\xd1&gt;t\xf1\x08?\x82\x9cO&gt;~I\xf2&gt;\x0b\xd6\x1d?\xff-&#34;&gt;\xb8(_?W\x94o?\xcd\x08A&gt;\xac7\x87&gt;\x15\xaf&amp;&lt;\xab\xcd\xd2&gt;\xf6\xb9\xae=@M\x86&gt;\xb2\x89^?=\x10j?x&#34;\xb9&gt;\x03\x05H?&amp;L}?\x05\x803&gt;\x97\x18\xe4&gt;\x1c\xb9\xaa&gt;\x07\xb5\x9d&lt;\x05\xb1~=\xa9L\xbc&gt;&lt;)[?\xdc\x8eC?\xa3\xcb\xf8&lt;k_&gt;?_\x12e?3\xce5?\xef.V?h\x92\r?U&lt;\xa6&gt;\xe6,\x83&gt;J\xd3\x8a&gt;\xf4\xe6*?\xf1y]?\xea\xda\xea=|\xff\x96&gt;\xe4\x8ed?\xff\x00\x82&gt;\x13\xb6\x1e?\x04{h?\xa9\xf4\x86&gt;\x8d\xed\xf9&gt;]\xf3|&lt;\x8d!\t?mq\x94&gt;M6]?\xa5cP=\tb~&gt;\xcf\xd6\x83=K\xb4Z?\rPt&gt;+\x1bW?\x93&gt;W?\xc7E ?\x81\xcb-?D)i?\x99\x02\xb0&gt;\xa4X\x18&gt;:\xc5\xc8&gt;~\x85\xef&gt;=\x7fy&gt;h\x8ee?\x02\xd7Y?\x1bd\xf2&lt;\x82\xda\x0c&gt;\xb9f,&gt;\xed\xd9:?\x12\xf66&gt;\x90\xeek?:+l?+e\xbe&gt;7\x18=?j\xda~?\xd0A\xb8&gt;\x8f2\x95&gt;E\x92\xc0=f\xb2\xbb&gt;X\x8e\x99&gt;\xfc\xcaa&gt;\xa7j\xde80\xe6\xde&gt;\x8d:l&lt;[%\x0c=\xaaq\x05?\xe8\xf7\x89&gt;\xc4\x9c\\?h\xcfG?\xfa\x03T?v\x03k?\xc7\x90\x0c;Y\x8fL?\x15S&#34;?\xbc\t\xd9&gt;\xc8\xda\xa4&gt;\xcf\x82+?\xe0\x11\x1c?\&#39;\xe2\xc5&gt;a\x031?\xd4\x08G=\x82\xb5\xd5&lt;\x9e\xa7j?b\tx&gt;&amp;I\xc1;\xfa\xc0c?8$\x0c?t\xea??\x1eoT?\x02*l?\xe0\xee\xa0=3\x0f\x84&gt;\x81\xae\xbc=!E\xed&gt;\x0b\xee\x80=|^\xeb&gt;\xb6\x0b@?\x1a\xb5v&gt;\x86\xc5M?\xb3]k?x\x0e\xe1&gt;\xb0d\xcb&gt;\xe5\x7f\xa5&gt;&lt;\x89\x10?{\x96\x96&gt;\x9bqf?\xf6\x9cd&gt;b\xee\xbf&gt;\x8dP\x00?\xbe\xa8;&gt;a\xf0\xd4&gt;?\x89T?\xbf\xff\xb8=\xe5\ry?\x1b\xcb\x02?\xb7S\x19&gt;\x0f\x96&amp;?\xa1\xca\x18?[A)?y\x8cX?\xf5O#&gt;\x85\x8f\x11&gt;}\x14\x81=UN\xb6&gt;\x8fi\x92&gt;\x9d\x84A&gt; \xd5\xad&gt;\xff2\xa2&gt;yG\x18&lt;\xb5m/?cW.&gt;#\xa1e?\xa0\xfa\x1d?\xcfd\x16?E\xaal?M\x87x?\x8b0\xe6&gt;\x10MW?\x01&lt;\xd1&gt;\t\x990&gt;\xa32\t?\xfd\xe3/?\xa9\xe5=&gt;\x7f\xdd:&gt;a,\&#39;&gt;Eo\x06?\xe9\xabe?\xc5\x879?\n\xe5h=\xd4\x0b^?y\xa7G&lt;\x02A\xf5=\xf7Hy?\xe3\x9e ?\x82\xb6&gt;?~\xf8\xf4&gt;\x90\xd8\xaf=\xfcpX?\x1d\xa5\x1e?2\xc11?\xadf\xe1&gt;\xcf\x1c\n?x\x0f\xd8&gt;\x86\x02\xa9=\xb8\xb3\xcf=\x11\x91:?\x92\xf4\x0e?\xbf\x14\x9b&gt;\x93G\x7f&gt;\xaa-\xea&gt;\xf1\x95\xbb&gt;\xa0*\xde&gt;R9\x7f?\x95\xe2N&gt;B\x84\x12?2\xa0u?\xadbD?\xbb\xefO?i]\xf8=b\x05\t?g\xd6\x80&gt;F\xf6[?n\xde\xb0=\xa2\xbdj?I^\xfd&gt;\xb7k\x07&gt;\x1bE\xf8&gt;vB\xb7&gt;O%=?T\xebF?\x90\x87m?Q+\x16?YCc?\xba\x08\xb4&gt;\x0fNT&gt;xe\x0e?\x974P?\xc4\xbdi&gt;\x8bu\x81&gt;U;\x1a?|\xae8?\x1f\xef\x01&gt;4M\xaa&gt;\x7fgr?\xf8\xd6\xba&gt;z\xa0\xbc&gt;}\xde/&gt;\x90\xbeI?\xa5\xc2e?\x9e\x0cf?\x95:J? \xb2\xf3&gt;\x00\xf6p?\xdaZE?\xce\x18\x1d&gt;\xe8\xdc`&gt;\x9f\x03\xa0&gt;\xe1\xf9\x1d?E_\xcd=\xdc\x1e9?\xb3?a?\xcfnf?\xc1$\x01&gt;5S\x11?f\xf38?0z;?\xfd\x8cb?C\xe1\xe6&gt;\\\xd3S?l_\xa5&gt;k\xe8\x1f?\xa7\xe3\xea&gt;\xb5$p&gt;\xa9\x90\x05?z\xf4P&gt;&amp;\xb0\x0b?M\x8b\x08?\xdd\x94\xcf&gt;MA\x0b?\xea\x12\x19&gt;l\xf2\x1a&gt;\x9e\xecs?\x1a=\x83&gt;\xd9\xc5\t?n.2&gt;\t\xb73?\xbb\x9f??\x15=a?s\xd5N?\xb7\xc9b&gt;`\x1dP?\xa2\xd0\x80&gt;\x04\xf4\xd0&gt;\xf6,K?~\xb2z&gt;\xcc\xa5s?$\xd0f=\x1f\x86\x1d?\x17\xc8v&gt;\x11\xd8@?,@0?\xc7\xa9\&#39;&gt;\xc0/\x1b?!\xbb\x85&gt;I\x9a\xb5=7\x8dx?z\xa7w?w\xb4\x1e&gt;6\xb8\x7f&gt;\x8a\x86\xca&gt;K|`?\xd5\xc7\x19?\x99E ?0@%?\xf3\x0f\x10?\x9a\x01\xa2&gt;\xc5\xbe]?\x13LR?V\x0eH?\x7f9\x13&gt;\x10\x10\xce&gt;\xba\xd6\x00&gt;&lt;\x03\x87&gt;\x1d/\xaf=Q\x06x?6y\x03&lt;\x9c\xa88?\x06\\\xa0&gt;\xf24\xe8&gt;\xe57V&gt;\xe4\x803?\x0fu5?\xb8\x02\xd2&gt;:P!=\x08\x98\x88&gt;&amp;\x1dW?\xf9f\xcc=BU&amp;=;\xb5\xd6&gt;\xa1\xa5\xb3&gt;wj`?\xf9 g?\x02A+?\x12\xe4H?\x99\xb4\xf6=\x15\x02\xed&gt;\x9eKZ&gt;\x14vX&gt;\xc7\xe2\&#39;?_\xd16?e\x166?y\xc2R&gt;\xc3\x93n&gt;\xc8\x98\xc9&lt;\x9d*\x01?\xf1*\x8d&lt;\x9e\xe2\t?\xbb\xcdS?C\xdc\x0c?\\\xa6h?\x9a\x13\x8d&gt;5\x023?$+\xcf=\xd5H\x03=w\xba\xba&gt;\x1f\x86P&gt;0\x06\x0c?*\xac\x03?\x8e\xeb_?\x14~\x14?\xa1h=?*&lt;\x94&gt;\xe3\&#39;\xa5&gt;&amp;\xfb2&gt;\xf7\xbc\x9a&gt;2\xc2\xf6=a7\xad=&lt;3\x03?\x89\x16u?f\xa2v?\xfc{\x05?\xe9\xbf\x95&gt;\xc8\xc9\x0e?\x81\xf9D?\xbd\xc8\x18?\xe7Y\xb9=\xa8\xac\xa8&gt;\x109c&gt;\xd4\x04\x18?7\x859?\xa2e\x92&gt;\xcf\x9d\x11&gt;\x95\xe6\x94&gt;\x17\x02\xf1&gt;\x85\xd3Y?\xa0E\xc6&gt;\x80n\xe2&gt;/\x03\x10?\x16-\x8b&gt;\x95h,?r\x1a\x11&gt;2L\xe3=\xa0\xf8E&gt;\x8b\xc3\xfd&gt;\xebN\xc2&gt;\&#39;=\xd2&gt;\xc6\xadM?\x04\xe8\xf6&gt;\xf2\x89\xc5&gt;*JG?\xdb\x1db?o\x9bg?&#34;\xf7o=ly&amp;?2\xf6f?2%\xd8&gt;\xaf70?\xfdV\x82&gt;\x1a\x10v?\xa4\xe9\xd4=e\x8cK?\xf2=\xe5=\x8d\xa9u?C\x1c\xff&gt;Maq?I\x97\x10?t\xbf\x04?\xe3Z\x00?\xa5\xec\xf7=\x0ew\xbb&gt;3jP?\x1eS\xec&gt;\xdb\xe1??\xde\xb5\x15?\xb1\xc0H&gt;\x0f\xf7,?F\x83\x8e=\xd5\x08_?\x1a\x0fo?i\xe3p?\xe0\x1a\x11?_\x0cI?rF&#34;?P\x82&amp;?\x94\x8fY?\x0f\xb5c?\xc5$\xa4&gt;3-}&gt;\x05\xdcV&gt;\xeb.\xe1&gt;\xa5\xf8\&#39;?\xbd\xaaN&gt;\x1b\xc3\xce=\xad\xc2\x0f?R\x80k?\xb0\x95\xf2&gt;\xa8\xe7\xb8=,3\xb0&gt;\xc0i4&gt;9\xd1\x1d?\xc5\x8d\x11?\x17\xeb\x13?\xed\xecE&gt;\x88\xb6Q?Ou\xea&gt;\x84&lt;\xed&gt;&lt;\xcf\x02&gt;\xec\n\x90&gt;\xb1\xe4\x15&gt;9\xf8U?\x90\x91\xb8&gt;\x94N\xd6&gt;\xbc\xf2\x0f&gt;\xaa\xae\xb8&gt;\x83 \xe3&gt;fH\r?\x8a\x19\xae&gt;c\xe3\x8c&gt;x#w?\x07*\x14?\xba$\x89=\x0c\xe7T?\xbb\n\x14?*\xa5\xd5&gt;@\x15\xd4=\x1d}1?\xaf\xbb\x1a&gt;\x83\x18\xa8&gt;0\r\xeb&gt;\xabt\xf3&gt;\x1b\x9f\x03?}\xd7k?2+c&lt;\x04\xf2\xe9=~B=?\xc4an?`\xd9\xb3&gt;\x82\x92\x7f?\xba}\xa9&gt;\xe75j=\xe8\x9f/?\xd4Z\x19&gt;\t\xaa}?&gt;\x97\xa6=o\x1b+&gt;\\\xca\xf9&gt;\xe3Xl?C\xa3T??*\xf2&gt;\xe1\xd7d?\x90M\xb2&gt;2{U?\xba\xd0y?\xe47M?M\xca7&gt;3\x84\x1e?\xb0D\xfb&gt;\x1d \xc9&gt;~I\x16?\\O\xf3=:\xbf#?DT\xdb&gt;\xa9\x901&gt;e\xd9\x16&gt;\xae\x13\xa3&lt;\\\xc5\xfc&gt;\xde\xabk?\xd7\xcc\xdb&lt;\xdf\xb6;?\x99\x13)&gt;\xc7q`&lt;,\xa5\xe3&gt;\xb6\xfd\x02?\x15\x11\x06?ia/?8\xf1D&gt;U\xddf?\n\x9f(?O\xf0d?\xa114?\x85\xca[&gt;P\x89\\?\x7f\x1df?r\xdd|?\xb8\xcfV?\x96AS&gt;gs\x0b&gt;}\x89U?\x89\x18+?\xa0\xf4\xb1&gt;\xf0\xf3n?\x8aQ\x11?p\xbdI&gt;\xed\x10%?\xdc/\x08?j@\xcb&gt;C\x04\x8b&gt;\x8b9\x11&lt;\x8a\xc2 ?\xb8,7&gt;\xd7$\xeb&gt;\x8f\xc0w?\xfc\x0fb&gt;cJi?\x00\x14\x0f?\xeb\xb9:?\x18!`?.\x18\&#39;?\\\x98Y?\xc1\xe0\xa9&gt;~\xae2?\x8a\xe0\xa0&lt;\xec\xf0&amp;?\xf71J?\x92u\xef&gt;S\xfem?\xd6\xea}=\xfa@\x99&gt;8\xffo&gt;\x83\xddq?\xf3m\\&gt;%\xfe\xbf&gt;\xac\xdc\x1c?\xba\x80Y?\x01\x08W?`\xf5i?\xb0\xda\xdf&gt;\x08@&gt;?\xc8\xb6\x8a&gt;\x98_\x0e=\x88r\x9e=\x94h]&gt;\xa5\xba*?\x0c\x10!?.\xbe\x9a&gt;\x87R*&gt;-2\x8b&gt;\x89\x08I?*\xf5&amp;?\n40?\xe1\xa6o?\xafW\xf1=i\xb6\x83&gt;\x10\xe0\x18?\xb48B?\t\xaf/?\xdf3o?)jY&gt;i\xce\x97&gt;X f?x\x84\xbc&gt;d\x7f\x19&gt;\x00(\xe4&gt;\xc7p[?J\xce$&gt;\xe9\xbeq?M$O?\xdd\x0b5=v\xfaS&gt;d\xa5t&gt;bj\xec&gt;\xab\xees?v)7?\x9d\x03\xd7&gt;\xbc\xa9\x98=\xc7x\&#39;;\xa4\xb2\xdf&gt;\xfe:\x06?\xde\&#39;\xeb&gt;\xf5-\xa7&lt;\x9c\xc9f?`\xf9@&gt;\x1e\xffh?\xe1\xd7\xbb&gt;\x84D\xbd&gt;\xf4(\x7f&gt;D\x15U?T\x9e\x80=&gt;\xbbO?\xa8R\xfc=)#n?\x91\xd8\t?k9Q&gt;$\x9a\xad&gt;$\xd3b?\xee\xb6.=\xc0\xf8\r&gt;\x87\x8f\xa1=\x95Y]?P\x0f\x1a?\x14\t\xf0&gt;n\xa1\x16&gt;@\xff\xbb&gt;\xa44\x03?&lt;\x87\x8d=e4\xd1&gt;\xbb\x1fD?\x84-\xb9&gt;\x11\xc6\xab&gt;\xce\x99|?\x82\xde9?C!\xb1=nXh?|\\\x12=\x8a\xea8?Q\x80i?\xf6\xf3k?\x8c#n?\x07\xb6&#34;?b\xe5.?\xc8\xa0y?&amp;{i=\x1c\xeb\xa6&gt;\x14\xc3\xb6=6rW?\xb3\xd2\xbc&gt;t\&#39;k&gt;F\xca\xa7&gt;e\xce\x05?JL\xa2&gt;\x13\x02\t?\xbcF\xc6&gt;\xaf=u?\r\x16p?\x0e\x002=\x9b\x89\xfa=\xcdY\xb0&gt;+\xf4c&gt;\xe2Wl?\x90m\xa8&gt;\x14)\x18?m\xff\xc7&gt;\x8f\xda\x1d?\x19\xa0\x1d?Q\xfbv?\xcb[\xae&gt;\x80\xc3\x9c&gt;\x1eP\x17?G.\x9c&gt;d\xcdD?7\x1eC?\xb9hK?E\xdf\&#39;&gt;\xccPQ?\x8b\x1a\xcb&gt;\x81^T&gt;\xe7\x9b\x97&gt;:\xa2\xbe&gt;\x84e3?\x00&gt;\xe1=\xc0u\xd0=\xc3\xb6\xca=y\xbaL?\x1eU\xb7&gt;\x1f`\xcc&gt;\x16\xf1K?\xb4\xed*?\xa5\x83\x16&gt;_\xdd\xfe=\x0c\xa3\x01?1y\xdd&gt;\x7f\xaa&lt;&gt;\x97[\x14?*\x7f[?n\xf3:?3g\xf6&gt;\x96\xa1x&gt;%n\x96=\xfa?\x15?\x08\xf3\xac&gt;\xe8\xefh?B5\x7f&gt;\xfd\x9cu?L\x0ew&gt;.\x1f\x8c&gt;\x11\xae\xf0&gt;\xe1\x0e\x01?\xca\xac\x17?8\xb4b?\xd3\xa9\xbf=\x81\x17i?\x18\xd4\xd3&gt;X\x99\r&gt;\x1af\x1e?\xc4\xaaa&gt;K\xd8\xb9&gt;B\xb3\x0c?\x9d\xbdB?\xb0PN?\xad\x1ah&gt;\xb9\xfaL?\xf1@*?\x9d+V?1\xf9\xe4&gt;\x17\xb1\xc2&gt;\x9e\xa3\x85;\xae4\xdc&gt;\xdfw\x1a?\xee\xabQ?\x0f\x1ab?\x05\x1f??^\xedz?n\xff\xde&gt;\x18W\xbd=ZT\x92&gt;\xe1\xba7?\x86\xd5\xf6&gt;g\xee\xa0&gt;\xa6R\xbd=\x1e\x04\x84&gt;\x07\x9e\xe6=\xc3\x03&#34;?\xe2y\x94&gt;\xf0u??~\xafA&gt;\xfax\x19?\xc2=\x01?/\x812?\xad\xd2\xd8&lt;\&#39;\x80\xb1&gt;\x9c$\xff&lt;\xe6\x0b\xca&gt;S\xa6\xda&gt;\xe8_u?\xa4O\xd8&gt;7t\x1b=\xcbA\xd3&gt;\xa6\xa9\xee&gt;\xe7\x82\xfb&gt;\xad\x86x?$\xbcc?\x83\x9bI?\xcf\xe48?\xb5\x0fm?\x7f\xf75&gt;$\xa3G?\&#39;\xee\x0b&gt;\x17\xc5\x12&gt;\xbb\x83Y?\xfc\x01 ?-\x9en?U\xe5$&gt;\x10\t\r?v\x05Q?/*\x1c&gt;\x06\xa5t&gt;KNR?\x06\xb8\x16:`&#34;D?\x9c\x94\x04?\x1e\xa2#?\xfc\x8b\xe3&gt;\x91\x1fN?\x1c\xd0\x17?\xd3{\xe8&gt;\xe6,4?\xe9\x8fP?\xf1r\x83&gt;\x80\x85\x80&gt;\xa7u&lt;?\xac$\xe1&gt;\xb2y\x94&gt;\x88F\x1f?)H\xc7&gt;\x89]\xf9&gt;\xf5\x03\x82&gt;R\x8c\xd0&gt;3\xaf&gt;?\xc4&amp;b?\xab\xfbW?\xf8VL=J\x81V?.\xe1x&gt;\x7f\x1ei?\xb1\x16k?\xe5\xe24&gt; 5z=\xfd\xed\x0f&gt;\nN\xc9&gt;\xb4\x84\xfc&gt;@\x13k?\xea\x0b[=\xf1.l?\xdc\xf9&#34;?\nr/?\xc1)=?B\x14,?YD6?WK\x0c?\x05F\xfa&lt;c\xe2\xb2=\x8f\x0e\x12&gt;\x9cW\t?\x8a\x0c\x1f?i=\x15?nq\x02;\x9d\xefj?^eA&gt;0\xc2=?O\xca\xf2=\&#39;\xb9\xf1=\x96Y\x1f&gt;W\x838?x\x1a\xe5&gt;\x02r\x1f?\xca\x14\x1a?\x0e\rU&gt;\nG\xb1&gt;\xcdKP&lt;\x18\x83\x93=\xdf\x84\x88&gt;p\x02\xa6&gt;\xad\xc3\xe9&lt;\xe8\x07_?\x92U\t?\x1bs\x00?\xc0\xb1\xc6&gt;\xef\xfc\xca=k&#34;8&gt;\xb2,\x00&gt;\xa6\x1d7&gt;\x17\xc1\x05&gt;l.N?\xd3i\xb3&gt;\xdd\xc0\x0b?\xfdmn=H\xf0\xd3;ZN/?H\x15\xb4&gt;L*n?Nq(?E+]?$\x92\x14?x\x9b\x1b?^`\xbb=\x0e\xc8r?\xb47&lt;&gt;\xcdv\x1d?\xc3\xda\xe0&gt;6P\xd2&gt;A\x99\xc4&gt;0\x85X?\x86\xe8%?t*\xb1&gt;\xbf\xb0\xaa&gt;N\xb9\xfd&gt;\x10d\x92&gt;\xf7X\x0e?\x04\x9c\xb1&gt;HM\x16?\xf8\x1c\x82&gt;\x01\xb2\xab=\xa2\xce\x15&gt;\x9e\xcdl?bb1?wz\xf6&lt;Y\xd5d?x@\x1d=\xf9\xed\x10?\xe2\xbf\xd6&gt;\xcc\xfa\xa4&gt;]\x86B?\xb8\x9aV&gt;\xe7\xe86?\x10\x9f\xea==P,?\xc2T\xc0&gt;0p\x1d&gt;?}\xd6&gt;\xd4\x08\xfd=\xe5}\x92&gt;\x98\x95\xd0&gt;\xf1\x8f\x0e&gt;\x07OV?\xd8F\xc9&gt;\xf0\x95\x10?\xdc\xf9i?\x95\xc8\xb6&lt;\xa0%\\&gt;\x15\x99??\x1c\x8a\xfe&gt;*&lt;-&gt;\xc0\xf9\xba=\x17\xa1\xd0&gt; O\xff&gt;&lt;\xfd^?\x1c\xb9\xbf&gt;\xbed\x8f&gt;\x8c\x14\x7f&gt;\x12j\xbc&gt;30x?\x8b~\x85&gt;\xdez\x17?m\xd1_?\xc0\n\xde&gt;\xecV\x84=\x0fj\x84&gt;\xb8)\xef&lt;=n\xe9&gt;~\x8e\xf0&gt;\xee\xc3z?\x9a\xa5-?\x1d\xea7?\x14\xec\xc3&gt;\x1a|W&gt;\x00h\x97&gt;\xc9\xe0\x89&gt;t\xdeH?\xf4PN?\x94X\x13?\xbd\x10\xa5&gt;\x7f\xab6?\xce\xab\x07?\xceQr?/t\x1d?H\r\xf2=\x0bX\xae&lt;\x11\xb3\x0f?\xff\xe7N?\xf5\xcf%?L\xe8.?\xf7A\x19?\x05\x18%&gt;/#\x91=\xd3A\t?\xbb\xce\x06?\x1bS\r&gt;\x13\xd8.?(+\x15?\xf9\x1e\x01&gt;\xdf\xf1\x96&gt;\xe7\x953?Y\x1d&gt;=\xd9\xf4\x91&gt;\x16wA?\x84V8?O\x8b&lt;=\rd\xbe&gt;\xf1\xc2\xcd&gt;-\x10:?\x02&gt;\x96&gt;VI\xbc&gt;n\x9b\x10?\xbf\x97\x14?A\x85\xce&gt;a\xae\x9e&gt;U5%?d\xda\x01?\xd5N\xa2&gt;\xcd\xe0\xf6&gt;:\x9f\x1d&gt;V&#34;9?\xa9\\\x04?u2t:+$\xfe&gt;\x18\x00??-\t\xcd&gt;\xdd\xe3W&gt;\xe1\x8c*?\xd0\xa2\x11&gt;U\xa0x&gt;\xf6Hk&gt;\xddwP=\x85cg?\x9d\x18u?z\xceb&gt;4\x11\xd6=\n \xe9&gt;W\xff\xcc&gt;\xb8\x0b\x95&gt;\xab\xcd\x0b?\xcc\xf5q?dI=?\xb9\xa5x?\x92\x02\x1c?\xabm\xb4&gt;N\xa7%?A5\xcc&gt;;;u&gt;&gt;~\xed=\x8fp&amp;?\xa3K\x8c=%r\t?\xb6ns?\xa1\x89H?\x01=\xc0&gt;\xce\x1e\xfd=\x08\xfc\x91&gt;\x97D\xa6&gt;\x01\x9ae?w\xe4\x9f&gt;\xd8\x14\xb7&lt;i#q?\xd1\xbd\x05?\x9a\x00\x13&gt;d\xac\t?\xd5i\x8a&gt;\xdf\xb4\n?S\xa0\x1f?Pu1&gt;J\rd?\x02\xc8M&gt;\x97\xb9E?\x0f8c?\xcc\x14&amp;?\xd5\xa6\x95=\r\xdd\x80&gt;I\x81G?\x8eC~?h\x07L?A?J?\x15j\x0f?\xcat\xf1&gt;\x8a.\xcb&gt;\xee\xacy?,Q\xdf=\xa4&gt;\xc2&gt;-\n\x11?-z\xf8=oV1&gt;\&#39;\xf9B?\x86W\xa2&gt;\x9f\xd8a&lt;\xfd1\x07?&amp;\xd1\x16?\x0c\x17\xe0&gt;\xbe\tP&gt;T@\xeb=\xfe:\x97&gt;\x05o\x83;\x9d-&#34;?Ks\xef&gt;\xde\x8e\x13?\xc9\xe7\x98&gt;[\xdb=&gt;\xafs!?9\xe7\xae=\\\xce\t?F\xec\x93&gt;\xd4\xe05&gt;\x9f\xa5:&gt;\xefe\xa3&gt;Z\x8e\xfa&gt;\x12\xc7\xda&lt;\x91\xbd\xfb&gt;E\r\xbd&gt;37T?\xf6\xdc%?\xc28\x01=DB\xc7&gt;K\x022?\xb5\xd3\x8a&gt;\xb1\xd3H?\x1f\xe2q?\x1b\x91k?\xa5\xb0$?\xee\xa6\xa4&gt;(\xae\xe6&lt;\&#39;]\x18?\xf5\xce\x95&gt;\xdc\x06\x1f?\x06\xa9\xce=\xe0u\xbb&gt;e\xc1j&gt;:\xf4D?\n\xc6\\?\x83\xb7Q?\xebT\x15?%g0&gt;?\xa7s&gt;C(@?\x86GQ&lt;`go?_\x8dp?!B\x8f&gt;\xd1\x16\xea&gt;\x03\xed\xbe&gt;ni\x13&gt;ezA&gt;\xdf&lt;\x02&lt;\xda\xe1x&gt;\x91\xd6\x81&gt;\x1c.k?\xe6\x8b\xa7&gt;\xea&lt;P?v\xec&lt;?\xd8\x12q?\xe9\x00\xda=\x1c\xf8\xce&gt;f\xa7\x1f?}\xf7a&gt;\xff\x96q?\xd2\xf8\xed&gt;f\xd0&lt;?\xcd\x06\xe8&gt;B\xb6\xd9&gt;0W6?\xc2\t\x19?x\x909?\xc7\x06\xd6&gt;Xa\xae&gt;\n\x12\x06?_\xacq?\x9d\x85L&lt;8\x8f\xdf&gt;\x87\xfcE?\x89\xbbT?\x0fb{?&lt;b\x82=}\xe8\x04?\xafA\xab&gt;a\xf6\x86;{\xa6T?\xca\xb2\xeb&gt;\xc8\xa0\xca&gt;\x08\xa5q?\xe4`\x85&gt;\x7f}\xb6=k\xe6W?\xd0\xaf3&gt;,\x1e)=\x02\x0f7?\xb8\xd4r?\xfa\x0bD?\xc5\x8b@?\x1dFQ?\xdc\xdd_?!\xb0\x06&lt;\x04v\xbc&gt;\x12kN?\xa7*\xd7&gt;\x8ab\xa2&gt;q]N?\x8b\&#39;]=9\xefF?\xcd\xc6\t?\xf3OO?\xc48e&gt;*vC&gt;\x80\x9a\xc3=\x8d\xa9J?L@j?\x985\xb3&gt;\xa0\xd5\xc9&gt;\x7f\x04\xc0&gt;\x94\xeb\x0f?F\xa9\x91&gt;h\xf3\xed&gt;\x08\xbe\x1d&gt;-\xc79&gt;\x0b[R?\xcc\x17\x06?\xf5@\xe3&gt;5\xc1_?\xceF\xb0&gt;\xf8\x8d\xb9&gt;\x10{3?\xf5\xce\xee&gt;\x89\xceu?:\x14f?\xb7\xc6\xf2=y\xc5\xa1&gt;\x13\xd8t?6d\xbc&gt;X\xd2\xa4&gt;\xdb\x1ez??\x15\\?\x9a2\x1e?\x8b\x9eS&gt;j\x92\xe0&gt;\xf3\xcb\xf3=\x12\xdb\t?\xb8\xd8_&gt;\x8a\x11A?\x93\xc3\xdf=\xb8\x9bq?\xe0\x9a,?\xd3\xe6^&gt;\xb6\xecQ?\xba\xa0\x85&gt;\x95\xcb\x90=\xc6\x8b\xba&gt;\xdd\xafq?vj-?\xdc\xd0\xe7=\xa0\x1f\xca&gt;v\xce\xb9=/\xa9;?Y_\xcc&gt;\x99\x8e0?\xf55.?+9\\&gt;y|\xba=\xa4\xe9\x14?.%\xb3&gt;\xde\xd9\x1e?w,\x88&gt;\xad\x86\x94=\xa0\xd8)?\x9f\x1d\xb2&gt;\xdbx\xa9&gt;U4\x00?#\xbcX?I\xc3\x8e=&#39;}]
+</pre></div></div>
+</div>
+</section>
+<section id="范围查询(Range-Queries)">
+<h3>范围查询(Range Queries)<a class="headerlink" href="#范围查询(Range-Queries)" title="Link to this heading">¶</a></h3>
+<p>范围查询提供了一种通过距离过滤结果的方法，该距离是在 Redis 中的向量字段与查询向量之间的预定义阈值（半径）基础上进行的。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">Query</span><span class="p">(</span><span class="s2">&quot;@vector:[VECTOR_RANGE $radius $vec]=&gt;{$YIELD_DISTANCE_AS: score}&quot;</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">sort_by</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">return_fields</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">paging</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">dialect</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Find all vectors within 0.8 of the query vector</span>
+<span class="n">query_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+    <span class="s2">&quot;vec&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">VECTOR_DIMENSIONS</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="n">r</span><span class="o">.</span><span class="n">ft</span><span class="p">(</span><span class="n">INDEX_NAME</span><span class="p">)</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="p">)</span><span class="o">.</span><span class="n">docs</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[Document {&#39;id&#39;: &#39;doc:a&#39;, &#39;payload&#39;: None, &#39;score&#39;: &#39;0.243115246296&#39;},
+ Document {&#39;id&#39;: &#39;doc:c&#39;, &#39;payload&#39;: None, &#39;score&#39;: &#39;0.24981123209&#39;},
+ Document {&#39;id&#39;: &#39;doc:b&#39;, &#39;payload&#39;: None, &#39;score&#39;: &#39;0.251443207264&#39;}]
+</pre></div></div>
+</div>
+<p>请查看 <a class="reference external" href="https://github.com/RediSearch/RediSearch/blob/master/docs/docs/vecsim-range_queries_examples.ipynb">这个 Jupyter 笔记本</a> 中的其他范围查询示例。</p>
+</section>
+<section id="混合查询(Hybrid-Queries)">
+<h3>混合查询(Hybrid Queries)<a class="headerlink" href="#混合查询(Hybrid-Queries)" title="Link to this heading">¶</a></h3>
+<p>混合查询结合了传统过滤器（数值、标签、文本）和向量相似性搜索（VSS），可以在一个 Redis 命令中同时使用。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">Query</span><span class="p">(</span><span class="s2">&quot;(@tag:{ foo })=&gt;[KNN 2 @vector $vec as score]&quot;</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">sort_by</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">return_fields</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;tag&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">paging</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">dialect</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">query_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;vec&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">VECTOR_DIMENSIONS</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="n">r</span><span class="o">.</span><span class="n">ft</span><span class="p">(</span><span class="n">INDEX_NAME</span><span class="p">)</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="p">)</span><span class="o">.</span><span class="n">docs</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[Document {&#39;id&#39;: &#39;doc:b&#39;, &#39;payload&#39;: None, &#39;score&#39;: &#39;0.24422544241&#39;, &#39;tag&#39;: &#39;foo&#39;},
+ Document {&#39;id&#39;: &#39;doc:a&#39;, &#39;payload&#39;: None, &#39;score&#39;: &#39;0.259926855564&#39;, &#39;tag&#39;: &#39;foo&#39;}]
+</pre></div></div>
+</div>
+<p>请查看 <a class="reference external" href="https://github.com/RediSearch/RediSearch/blob/master/docs/docs/vecsim-hybrid_queries_examples.ipynb">这个 Jupyter 笔记本</a> 中的其他混合查询示例。</p>
+</section>
+</section>
+<section id="向量创建和存储示例(Vector-Creation-and-Storage-Examples)">
+<h2>向量创建和存储示例(Vector Creation and Storage Examples)<a class="headerlink" href="#向量创建和存储示例(Vector-Creation-and-Storage-Examples)" title="Link to this heading">¶</a></h2>
+<p>上述示例使用了虚拟数据作为向量。然而，实际上，大多数用例利用生产级的 AI 模型来创建嵌入。接下来，我们将使用一些示例文本数据，分别将其传递给 OpenAI 和 Cohere API，然后将结果写入 Redis。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">texts</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Today is a really great day!&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;The dog next door barks really loudly.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;My cat escaped and got out before I could close the door.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;It&#39;s supposed to rain and thunder tomorrow.&quot;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<section id="OpenAI-嵌入">
+<h3>OpenAI 嵌入<a class="headerlink" href="#OpenAI-嵌入" title="Link to this heading">¶</a></h3>
+<p>在使用 OpenAI 嵌入之前，我们需要清理现有的搜索索引并创建一个新的索引。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># delete index</span>
+<span class="n">r</span><span class="o">.</span><span class="n">ft</span><span class="p">(</span><span class="n">INDEX_NAME</span><span class="p">)</span><span class="o">.</span><span class="n">dropindex</span><span class="p">(</span><span class="n">delete_documents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># make a new one</span>
+<span class="n">create_index</span><span class="p">(</span><span class="n">vector_dimensions</span><span class="o">=</span><span class="n">VECTOR_DIMENSIONS</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">pip</span> install openai
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">openai</span>
+
+<span class="c1"># set your OpenAI API key - get one at https://platform.openai.com</span>
+<span class="n">openai</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;YOUR OPENAI API KEY&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create Embeddings with OpenAI text-embedding-ada-002</span>
+<span class="c1"># https://openai.com/blog/new-and-improved-embedding-model</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">Embedding</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">texts</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;text-embedding-ada-002&quot;</span><span class="p">)</span>
+<span class="n">embeddings</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;embedding&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Write to Redis</span>
+<span class="n">pipe</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">pipeline</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">embedding</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">embeddings</span><span class="p">):</span>
+    <span class="n">pipe</span><span class="o">.</span><span class="n">hset</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;doc:</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;vector&quot;</span><span class="p">:</span> <span class="n">embedding</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(),</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">texts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+        <span class="s2">&quot;tag&quot;</span><span class="p">:</span> <span class="s2">&quot;openai&quot;</span>
+    <span class="p">})</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">embeddings</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([[ 0.00509819,  0.0010873 , -0.00228475, ..., -0.00457579,
+         0.01329307, -0.03167175],
+       [-0.00357223, -0.00550784, -0.01314328, ..., -0.02915693,
+         0.01470436, -0.01367203],
+       [-0.01284631,  0.0034875 , -0.01719686, ..., -0.01537451,
+         0.01953256, -0.05048691],
+       [-0.01145045, -0.00785481,  0.00206323, ..., -0.02070181,
+        -0.01629098, -0.00300795]], dtype=float32)
+</pre></div></div>
+</div>
+</section>
+<section id="使用-OpenAI-嵌入进行搜索">
+<h3>使用 OpenAI 嵌入进行搜索<a class="headerlink" href="#使用-OpenAI-嵌入进行搜索" title="Link to this heading">¶</a></h3>
+<p>现在我们已经使用 OpenAI 创建了嵌入，我们可以执行搜索，以找到与某些输入文本相关的文档。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;animals&quot;</span>
+
+<span class="c1"># create query embedding</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">Embedding</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="p">[</span><span class="n">text</span><span class="p">],</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;text-embedding-ada-002&quot;</span><span class="p">)</span>
+<span class="n">query_embedding</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;embedding&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">query_embedding</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([ 0.00062901, -0.0070723 , -0.00148926, ..., -0.01904645,
+       -0.00436092, -0.01117944], dtype=float32)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># query for similar documents that have the openai tag</span>
+<span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">Query</span><span class="p">(</span><span class="s2">&quot;(@tag:{ openai })=&gt;[KNN 2 @vector $vec as score]&quot;</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">sort_by</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">return_fields</span><span class="p">(</span><span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="s2">&quot;tag&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">paging</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">dialect</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">query_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;vec&quot;</span><span class="p">:</span> <span class="n">query_embedding</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()}</span>
+<span class="n">r</span><span class="o">.</span><span class="n">ft</span><span class="p">(</span><span class="n">INDEX_NAME</span><span class="p">)</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="p">)</span><span class="o">.</span><span class="n">docs</span>
+
+<span class="c1"># the two pieces of content related to animals are returned</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[Document {&#39;id&#39;: &#39;doc:1&#39;, &#39;payload&#39;: None, &#39;score&#39;: &#39;0.214349985123&#39;, &#39;content&#39;: &#39;The dog next door barks really loudly.&#39;, &#39;tag&#39;: &#39;openai&#39;},
+ Document {&#39;id&#39;: &#39;doc:2&#39;, &#39;payload&#39;: None, &#39;score&#39;: &#39;0.237052619457&#39;, &#39;content&#39;: &#39;My cat escaped and got out before I could close the door.&#39;, &#39;tag&#39;: &#39;openai&#39;}]
+</pre></div></div>
+</div>
+</section>
+<section id="Cohere-嵌入">
+<h3>Cohere 嵌入<a class="headerlink" href="#Cohere-嵌入" title="Link to this heading">¶</a></h3>
+<p>在使用 Cohere 嵌入之前，我们清理现有的搜索索引并创建一个新的索引。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># delete index</span>
+<span class="n">r</span><span class="o">.</span><span class="n">ft</span><span class="p">(</span><span class="n">INDEX_NAME</span><span class="p">)</span><span class="o">.</span><span class="n">dropindex</span><span class="p">(</span><span class="n">delete_documents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># make a new one for cohere embeddings (1024 dimensions)</span>
+<span class="n">VECTOR_DIMENSIONS</span> <span class="o">=</span> <span class="mi">1024</span>
+<span class="n">create_index</span><span class="p">(</span><span class="n">vector_dimensions</span><span class="o">=</span><span class="n">VECTOR_DIMENSIONS</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">pip</span> install cohere
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cohere</span>
+
+<span class="n">co</span> <span class="o">=</span> <span class="n">cohere</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="s2">&quot;YOUR COHERE API KEY&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create Embeddings with Cohere</span>
+<span class="c1"># https://docs.cohere.ai/docs/embeddings</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">co</span><span class="o">.</span><span class="n">embed</span><span class="p">(</span><span class="n">texts</span><span class="o">=</span><span class="n">texts</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
+<span class="n">embeddings</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Write to Redis</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">embedding</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">embeddings</span><span class="p">):</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">hset</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;doc:</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;vector&quot;</span><span class="p">:</span> <span class="n">embedding</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(),</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">texts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+        <span class="s2">&quot;tag&quot;</span><span class="p">:</span> <span class="s2">&quot;cohere&quot;</span>
+    <span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">embeddings</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([[-0.3034668 , -0.71533203, -0.2836914 , ...,  0.81152344,
+         1.0253906 , -0.8095703 ],
+       [-0.02560425, -1.4912109 ,  0.24267578, ..., -0.89746094,
+         0.15625   , -3.203125  ],
+       [ 0.10125732,  0.7246094 , -0.29516602, ..., -1.9638672 ,
+         1.6630859 , -0.23291016],
+       [-2.09375   ,  0.8588867 , -0.23352051, ..., -0.01541138,
+         0.17053223, -3.4042969 ]], dtype=float32)
+</pre></div></div>
+</div>
+</section>
+<section id="使用-Cohere-嵌入进行搜索">
+<h3>使用 Cohere 嵌入进行搜索<a class="headerlink" href="#使用-Cohere-嵌入进行搜索" title="Link to this heading">¶</a></h3>
+<p>现在我们已经创建了 Cohere 嵌入，可以执行搜索以找到与输入文本相关的文档。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;animals&quot;</span>
+
+<span class="c1"># create query embedding</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">co</span><span class="o">.</span><span class="n">embed</span><span class="p">(</span><span class="n">texts</span><span class="o">=</span><span class="p">[</span><span class="n">text</span><span class="p">],</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
+<span class="n">query_embedding</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">embeddings</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="n">query_embedding</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([-0.49682617,  1.7070312 ,  0.3466797 , ...,  0.58984375,
+        0.1060791 , -2.9023438 ], dtype=float32)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># query for similar documents that have the cohere tag</span>
+<span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">Query</span><span class="p">(</span><span class="s2">&quot;(@tag:{ cohere })=&gt;[KNN 2 @vector $vec as score]&quot;</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">sort_by</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">return_fields</span><span class="p">(</span><span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="s2">&quot;tag&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">paging</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+     <span class="o">.</span><span class="n">dialect</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">query_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;vec&quot;</span><span class="p">:</span> <span class="n">query_embedding</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()}</span>
+<span class="n">r</span><span class="o">.</span><span class="n">ft</span><span class="p">(</span><span class="n">INDEX_NAME</span><span class="p">)</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="p">)</span><span class="o">.</span><span class="n">docs</span>
+
+<span class="c1"># the two pieces of content related to animals are returned</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[Document {&#39;id&#39;: &#39;doc:1&#39;, &#39;payload&#39;: None, &#39;score&#39;: &#39;0.658673524857&#39;, &#39;content&#39;: &#39;The dog next door barks really loudly.&#39;, &#39;tag&#39;: &#39;cohere&#39;},
+ Document {&#39;id&#39;: &#39;doc:2&#39;, &#39;payload&#39;: None, &#39;score&#39;: &#39;0.662699103355&#39;, &#39;content&#39;: &#39;My cat escaped and got out before I could close the door.&#39;, &#39;tag&#39;: &#39;cohere&#39;}]
+</pre></div></div>
+</div>
+<p>在这个 <a class="reference external" href="https://github.com/RedisVentures">GitHub 组织</a> 中，可以找到更多使用 Redis 向量相似性搜索的示例应用、教程和项目。</p>
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="pipeline_examples.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">管道示例</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="set_and_get_examples.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title"><code class="docutils literal notranslate"><span class="pre">set</span></code> 和 <code class="docutils literal notranslate"><span class="pre">get</span></code> 基本操作</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Redis Inc
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/redis/redis-py" aria-label="GitHub">
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+            </svg>
+        </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">向量相似度(Vector Similarity)</a><ul>
+<li><a class="reference internal" href="#索引创建(Index-Creation)">索引创建(Index Creation)</a></li>
+<li><a class="reference internal" href="#将向量添加到-Redis">将向量添加到 Redis</a></li>
+<li><a class="reference internal" href="#搜索(Searching)">搜索(Searching)</a><ul>
+<li><a class="reference internal" href="#KNN-查询">KNN 查询</a></li>
+<li><a class="reference internal" href="#范围查询(Range-Queries)">范围查询(Range Queries)</a></li>
+<li><a class="reference internal" href="#混合查询(Hybrid-Queries)">混合查询(Hybrid Queries)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#向量创建和存储示例(Vector-Creation-and-Storage-Examples)">向量创建和存储示例(Vector Creation and Storage Examples)</a><ul>
+<li><a class="reference internal" href="#OpenAI-嵌入">OpenAI 嵌入</a></li>
+<li><a class="reference internal" href="#使用-OpenAI-嵌入进行搜索">使用 OpenAI 嵌入进行搜索</a></li>
+<li><a class="reference internal" href="#Cohere-嵌入">Cohere 嵌入</a></li>
+<li><a class="reference internal" href="#使用-Cohere-嵌入进行搜索">使用 Cohere 嵌入进行搜索</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=91cf81b4"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="../_static/translations.js?v=beaddf03"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </body>
+</html>

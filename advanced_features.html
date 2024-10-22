@@ -1,0 +1,669 @@
+<!doctype html>
+<html class="no-js" lang="zh-CN" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="索引" href="genindex.html" /><link rel="search" title="搜索" href="search.html" /><link rel="next" title="Examples" href="examples.html" /><link rel="prev" title="RESP 3 功能(RESP 3 Features)" href="resp3_features.html" />
+
+    <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
+        <title>高级功能(Advanced Features) - redis-py 5.1.1 文档</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">redis-py 5.1.1 文档</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="_static/logo-redis.svg" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">redis-py 5.1.1 文档</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="搜索" name="q" aria-label="搜索">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="genindex.html">索引</a></li>
+</ul>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="commands/index.html">Redis 命令</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Redis 命令</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="commands/core.html">核心命令(Core Commands)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands/sentinel.html">哨兵命令(Sentinel Commands)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands/cluster.html">Redis 集群命令(Cluster Commands)</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="redismodules/index.html">Redis 模块命令(Modules Commands)</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Redis 模块命令(Modules Commands)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="redismodules/bloom.html">RedisBloom 命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="redismodules/graph.html">RedisGraph 命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="redismodules/json.html">RedisJSON 命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="redismodules/search.html">RediSearch 命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="redismodules/timeseries.html">RedisTimeSeries 命令</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="connections.html">连接到 Redis (Connecting to Redis)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">集群(Clustering)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">异常(Exceptions)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backoff.html">回退(Backoff)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lock.html">锁(Lock)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retry.html">重试工具(Retry Helpers)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lua_scripting.html">Lua脚本(Lua Scripting)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="opentelemetry.html">集成 OpenTelemetry(Integrating)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resp3_features.html">RESP 3 功能(RESP 3 Features)</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">高级功能(Advanced Features)</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="examples.html">Examples</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/connection_examples.html">连接示例(Connection Examples)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/ssl_connection_examples.html">SSL 连接示例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/asyncio_examples.html">异步示例(Asyncio Examples)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/search_json_examples.html">索引 / 查询 JSON 文档</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/set_and_get_examples.html"><code class="docutils literal notranslate"><span class="pre">set</span></code> 和 <code class="docutils literal notranslate"><span class="pre">get</span></code> 基本操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/search_vector_similarity_examples.html">向量相似度(Vector Similarity)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/pipeline_examples.html">管道示例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/timeseries_examples.html">时间序列(Timeseries)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/redis-stream-example.html">Redis 流示例(Stream Examples)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/redis-stream-example.html#流组(Stream-groups)">流组(Stream groups)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/opentelemetry_api_examples.html">OpenTelemetry Python API</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/redis/redis-py/blob/master/docs/advanced_features.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/redis/redis-py/edit/master/docs/advanced_features.rst" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="advanced-features">
+<h1>高级功能(Advanced Features)<a class="headerlink" href="#advanced-features" title="Link to this heading">¶</a></h1>
+<section id="a-note-about-threading">
+<h2>关于线程的说明(A note about threading)<a class="headerlink" href="#a-note-about-threading" title="Link to this heading">¶</a></h2>
+<p>Redis 客户端实例可以安全地在多个线程之间共享。在内部，连接实例仅在执行命令时从连接池中获取，并在执行完命令后立即返回到连接池中。命令执行时不会修改客户端实例的状态。</p>
+<p>然而，有一个例外情况：Redis 的 SELECT 命令。SELECT 命令允许你切换当前连接使用的数据库。该数据库将保持选中状态，直到选择了另一个数据库或关闭连接。这会导致一个问题，即某些连接可能会返回到连接池中时仍连接到不同的数据库。</p>
+<p>因此，redis-py 不在客户端实例上实现 SELECT 命令。如果你在同一个应用程序中使用多个 Redis 数据库，则应该为每个数据库创建一个单独的客户端实例（可能还需要单独的连接池）。</p>
+<p>将 PubSub 或 Pipeline 对象在线程之间传递是不安全的。</p>
+</section>
+<section id="pipelines">
+<h2>管道(Pipelines)<a class="headerlink" href="#pipelines" title="Link to this heading">¶</a></h2>
+<section id="default-pipelines">
+<h3>默认管道(Default pipelines)<a class="headerlink" href="#default-pipelines" title="Link to this heading">¶</a></h3>
+<p>管道 (Pipelines) 是 Redis 基类的子类，提供了将多个命令缓冲到服务器的单个请求中的支持。通过减少客户端与服务器之间来回发送的 TCP 数据包数量，它们可以显著提高一组命令的执行性能。</p>
+<p>使用管道非常简单：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;bing&#39;</span><span class="p">,</span> <span class="s1">&#39;baz&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># 使用 pipeline() 方法创建一个管道实例</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pipe</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">pipeline</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># 以下 SET 命令将被缓冲</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pipe</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;bing&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># EXECUTE 调用会将所有缓冲的命令发送到服务器，并返回</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># 一个响应列表，每个命令对应一个响应。</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pipe</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+<span class="go">[True, b&#39;baz&#39;]</span>
+</pre></div>
+</div>
+<p>为了便于使用，所有缓冲到管道中的命令都会返回管道对象本身。因此，可以像这样进行链式调用：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pipe</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sadd</span><span class="p">(</span><span class="s1">&#39;faz&#39;</span><span class="p">,</span> <span class="s1">&#39;baz&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">incr</span><span class="p">(</span><span class="s1">&#39;auto_number&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+<span class="go">[True, True, 6]</span>
+</pre></div>
+</div>
+<p>此外，管道还可以确保缓冲的命令以原子方式作为一个组执行。这是默认行为。如果你想禁用管道的原子性，但仍然希望缓冲命令，可以关闭事务。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pipe</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">pipeline</span><span class="p">(</span><span class="n">transaction</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>一个常见问题是，需要原子事务但需要在事务中使用 Redis 中的值。例如，假设 INCR 命令不存在，我们需要在 Python 中构建一个原子的 INCR。</p>
+<p>一个非常天真的实现是 GET 值，在 Python 中递增它，然后将新值 SET 回去。然而，这并不是原子的，因为多个客户端可能同时执行此操作，每个客户端都会从 GET 获取相同的值。</p>
+<p>此时可以使用 WATCH 命令。WATCH 允许在启动事务之前监视一个或多个键。如果这些键在事务执行之前发生了变化，则整个事务将被取消，并抛出 WatchError。为了实现我们自己的客户端 INCR 命令，可以这样做：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">r</span><span class="o">.</span><span class="n">pipeline</span><span class="p">()</span> <span class="k">as</span> <span class="n">pipe</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="c1"># 监视持有序列值的键</span>
+<span class="gp">... </span>            <span class="n">pipe</span><span class="o">.</span><span class="n">watch</span><span class="p">(</span><span class="s1">&#39;OUR-SEQUENCE-KEY&#39;</span><span class="p">)</span>
+<span class="gp">... </span>            <span class="c1"># 在 WATCH 后，管道将进入立即执行模式，</span>
+<span class="gp">... </span>            <span class="c1"># 直到我们告诉它再次开始缓冲命令。</span>
+<span class="gp">... </span>            <span class="c1"># 这使我们可以获取序列的当前值</span>
+<span class="gp">... </span>            <span class="n">current_value</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;OUR-SEQUENCE-KEY&#39;</span><span class="p">)</span>
+<span class="gp">... </span>            <span class="n">next_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">current_value</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="gp">... </span>            <span class="c1"># 现在我们可以使用 MULTI 将管道重新置于缓冲模式</span>
+<span class="gp">... </span>            <span class="n">pipe</span><span class="o">.</span><span class="n">multi</span><span class="p">()</span>
+<span class="gp">... </span>            <span class="n">pipe</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;OUR-SEQUENCE-KEY&#39;</span><span class="p">,</span> <span class="n">next_value</span><span class="p">)</span>
+<span class="gp">... </span>            <span class="c1"># 最后，执行管道（SET 命令）</span>
+<span class="gp">... </span>            <span class="n">pipe</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+<span class="gp">... </span>            <span class="c1"># 如果在执行过程中没有抛出 WatchError，那么</span>
+<span class="gp">... </span>            <span class="c1"># 我们所做的一切都是原子操作。</span>
+<span class="gp">... </span>            <span class="k">break</span>
+<span class="gp">... </span>       <span class="k">except</span> <span class="n">WatchError</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="c1"># 在我们开始 WATCH 和管道执行之间，另一个客户端</span>
+<span class="gp">... </span>            <span class="c1"># 必须更改了 &#39;OUR-SEQUENCE-KEY&#39;。</span>
+<span class="gp">... </span>            <span class="c1"># 我们最好重试。</span>
+<span class="gp">... </span>            <span class="k">continue</span>
+</pre></div>
+</div>
+<p>请注意，由于管道在 WATCH 期间必须绑定到单个连接，因此必须小心确保通过调用 reset() 方法将连接返回到连接池。如果管道作为上下文管理器使用（如上例所示），reset() 将自动调用。当然，你也可以通过显式调用 reset() 手动完成此操作：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pipe</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">pipeline</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="n">pipe</span><span class="o">.</span><span class="n">watch</span><span class="p">(</span><span class="s1">&#39;OUR-SEQUENCE-KEY&#39;</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="o">...</span>
+<span class="gp">... </span>        <span class="n">pipe</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="k">break</span>
+<span class="gp">... </span>    <span class="k">except</span> <span class="n">WatchError</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">continue</span>
+<span class="gp">... </span>    <span class="k">finally</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="n">pipe</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>一个名为 &quot;transaction&quot; 的便捷方法存在，用于处理监视错误的所有样板代码。它接收一个可调用对象，该对象应期望一个管道对象作为参数，并且可以传入任何数量的要监视的键。我们上面的客户端 INCR 命令可以这样重写，代码更易于阅读：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">client_side_incr</span><span class="p">(</span><span class="n">pipe</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">current_value</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;OUR-SEQUENCE-KEY&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">next_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">current_value</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="gp">... </span>    <span class="n">pipe</span><span class="o">.</span><span class="n">multi</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="n">pipe</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;OUR-SEQUENCE-KEY&#39;</span><span class="p">,</span> <span class="n">next_value</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">transaction</span><span class="p">(</span><span class="n">client_side_incr</span><span class="p">,</span> <span class="s1">&#39;OUR-SEQUENCE-KEY&#39;</span><span class="p">)</span>
+<span class="go">[True]</span>
+</pre></div>
+</div>
+<p>请确保在传递给 Redis.transaction 的可调用对象中，在任何写入命令之前调用 pipe.multi()。</p>
+</section>
+<section id="pipelines-in-clusters">
+<h3>集群中的管道(Pipelines in clusters)<a class="headerlink" href="#pipelines-in-clusters" title="Link to this heading">¶</a></h3>
+<p><a class="reference internal" href="connections.html#redis.asyncio.cluster.ClusterPipeline" title="redis.asyncio.cluster.ClusterPipeline"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterPipeline</span></code></a> 是 <a class="reference internal" href="connections.html#redis.cluster.RedisCluster" title="redis.cluster.RedisCluster"><code class="xref py py-class docutils literal notranslate"><span class="pre">RedisCluster</span></code></a> 的一个子类，提供了在集群模式下对 Redis 管道的支持。当调用 execute() 命令时，所有命令都会按照将要执行的节点进行分组，然后由各自的节点并行执行。管道实例将在所有节点响应之前等待，才会将结果返回给调用者。命令响应以列表形式返回，顺序与发送顺序相同。管道可以显著提高 Redis 集群的吞吐量，通过大幅减少客户端与服务器之间的网络往返次数。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">rc</span><span class="o">.</span><span class="n">pipeline</span><span class="p">()</span> <span class="k">as</span> <span class="n">pipe</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">pipe</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;value1&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">pipe</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;value2&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">pipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">pipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">pipe</span><span class="o">.</span><span class="n">execute</span><span class="p">())</span>
+<span class="go">[True, True, b&#39;value1&#39;, b&#39;value2&#39;]</span>
+<span class="go">...     pipe.set(&#39;foo1&#39;, &#39;bar1&#39;).get(&#39;foo1&#39;).execute()</span>
+<span class="go">[True, b&#39;bar1&#39;]</span>
+</pre></div>
+</div>
+<p>请注意：
+- RedisCluster 管道目前仅支持基于键的命令。
+- 管道从集群的参数中获取 ‘read_from_replicas’ 的值。因此，如果集群实例中启用了从副本读取，则管道也会将读取命令指向副本。
+- 在集群模式下，不支持 ‘transaction’ 选项。在非集群模式下，执行管道时可以使用 ‘transaction’ 选项。这将使用 MULTI/EXEC 命令包装管道命令，并有效地将管道命令转换为单个事务块。这意味着所有命令将按顺序执行，而不会受到其他客户端的干扰。然而，在集群模式下，这是不可能的，因为命令根据其各自的目标节点进行分区。这意味着我们无法将管道命令转变为一个事务块，因为在大多数情况下，它们被拆分为多个较小的管道。</p>
+</section>
+</section>
+<section id="publish-subscribe">
+<h2>发布/订阅(Publish / Subscribe)<a class="headerlink" href="#publish-subscribe" title="Link to this heading">¶</a></h2>
+<p>redis-py 包含一个 PubSub 对象，用于订阅频道并监听新消息。创建一个 PubSub 对象非常简单。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">pubsub</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>一旦创建了 PubSub 实例，就可以订阅频道和模式。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="s1">&#39;my-first-channel&#39;</span><span class="p">,</span> <span class="s1">&#39;my-second-channel&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">psubscribe</span><span class="p">(</span><span class="s1">&#39;my-*&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>现在，PubSub 实例已订阅这些频道/模式。可以通过从 PubSub 实例读取消息来查看订阅确认。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">get_message</span><span class="p">()</span>
+<span class="go">{&#39;pattern&#39;: None, &#39;type&#39;: &#39;subscribe&#39;, &#39;channel&#39;: b&#39;my-second-channel&#39;, &#39;data&#39;: 1}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">get_message</span><span class="p">()</span>
+<span class="go">{&#39;pattern&#39;: None, &#39;type&#39;: &#39;subscribe&#39;, &#39;channel&#39;: b&#39;my-first-channel&#39;, &#39;data&#39;: 2}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">get_message</span><span class="p">()</span>
+<span class="go">{&#39;pattern&#39;: None, &#39;type&#39;: &#39;psubscribe&#39;, &#39;channel&#39;: b&#39;my-*&#39;, &#39;data&#39;: 3}</span>
+</pre></div>
+</div>
+<p>从 PubSub 实例读取的每条消息将是一个包含以下键的字典。</p>
+<ul class="simple">
+<li><p><strong>type</strong>: 以下之一：'subscribe'、'unsubscribe'、'psubscribe'、'punsubscribe'、'message'、'pmessage'</p></li>
+<li><p><strong>channel</strong>: [取消]订阅的频道或发布消息的频道</p></li>
+<li><p><strong>pattern</strong>: 匹配已发布消息频道的模式。对于 'pmessage' 类型，其他情况将为 None。</p></li>
+<li><p><strong>data</strong>: 消息数据。对于 [un]subscribe 消息，此值将是当前连接订阅的频道和模式的数量。对于 [p]message 消息，此值将是实际发布的消息。</p></li>
+</ul>
+<p>现在我们发送一条消息。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># publish 方法返回匹配的频道和模式</span>
+<span class="c1"># 订阅的数量。&#39;my-first-channel&#39; 匹配</span>
+<span class="c1"># &#39;my-first-channel&#39; 订阅和 &#39;my-*&#39; 模式订阅，</span>
+<span class="c1"># 因此此消息将被送达 2 个频道/模式。</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">r</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="s1">&#39;my-first-channel&#39;</span><span class="p">,</span> <span class="s1">&#39;some data&#39;</span><span class="p">)</span>
+<span class="mi">2</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">p</span><span class="o">.</span><span class="n">get_message</span><span class="p">()</span>
+<span class="p">{</span><span class="s1">&#39;channel&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;my-first-channel&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;some data&#39;</span><span class="p">,</span> <span class="s1">&#39;pattern&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;message&#39;</span><span class="p">}</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">p</span><span class="o">.</span><span class="n">get_message</span><span class="p">()</span>
+<span class="p">{</span><span class="s1">&#39;channel&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;my-first-channel&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;some data&#39;</span><span class="p">,</span> <span class="s1">&#39;pattern&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;my-*&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;pmessage&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>取消订阅的方式与订阅相同。如果没有参数传递给 [p]unsubscribe，则将取消所有频道或模式的订阅。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">punsubscribe</span><span class="p">(</span><span class="s1">&#39;my-*&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">get_message</span><span class="p">()</span>
+<span class="go">{&#39;channel&#39;: b&#39;my-second-channel&#39;, &#39;data&#39;: 2, &#39;pattern&#39;: None, &#39;type&#39;: &#39;unsubscribe&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">get_message</span><span class="p">()</span>
+<span class="go">{&#39;channel&#39;: b&#39;my-first-channel&#39;, &#39;data&#39;: 1, &#39;pattern&#39;: None, &#39;type&#39;: &#39;unsubscribe&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">get_message</span><span class="p">()</span>
+<span class="go">{&#39;channel&#39;: b&#39;my-*&#39;, &#39;data&#39;: 0, &#39;pattern&#39;: None, &#39;type&#39;: &#39;punsubscribe&#39;}</span>
+</pre></div>
+</div>
+<p>redis-py 还允许你注册回调函数来处理已发布的消息。消息处理程序接受一个参数，即消息，这也是一个与上面示例相同的字典。要使用消息处理程序订阅频道或模式，可以将频道或模式名称作为关键字参数传入，其值为回调函数。</p>
+<p>当在频道或模式上读取带有消息处理程序的消息时，将创建消息字典并将其传递给消息处理程序。在这种情况下，从 get_message() 返回一个 None 值，因为消息已经被处理。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">my_handler</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MY HANDLER: &#39;</span><span class="p">,</span> <span class="n">message</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;my-channel&#39;</span><span class="p">:</span> <span class="n">my_handler</span><span class="p">})</span>
+<span class="go"># 读取订阅确认消息</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">get_message</span><span class="p">()</span>
+<span class="go">{&#39;pattern&#39;: None, &#39;type&#39;: &#39;subscribe&#39;, &#39;channel&#39;: b&#39;my-channel&#39;, &#39;data&#39;: 1}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="s1">&#39;my-channel&#39;</span><span class="p">,</span> <span class="s1">&#39;awesome data&#39;</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="go"># 为了使消息处理程序工作，我们需要告诉实例读取数据。</span>
+<span class="go"># 这可以通过多种方式完成（详见下文）。我们暂时将使用</span>
+<span class="go"># 熟悉的 get_message() 函数</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">message</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get_message</span><span class="p">()</span>
+<span class="go">MY HANDLER:  awesome data</span>
+<span class="go"># 请注意，my_handler 回调打印了上面的字符串。</span>
+<span class="go"># `message` 为 None，因为消息已由我们的处理程序处理。</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+<span class="go">None</span>
+</pre></div>
+</div>
+<p>如果您的应用程序对（有时嘈杂的）订阅/取消订阅确认消息不感兴趣，可以通过将 ignore_subscribe_messages=True 传递给 r.pubsub() 来忽略它们。这将导致所有订阅/取消订阅消息被读取，但它们不会冒泡到您的应用程序中。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">pubsub</span><span class="p">(</span><span class="n">ignore_subscribe_messages</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="s1">&#39;my-channel&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">get_message</span><span class="p">()</span>  <span class="c1"># 隐藏订阅消息并返回 None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="s1">&#39;my-channel&#39;</span><span class="p">,</span> <span class="s1">&#39;my data&#39;</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">get_message</span><span class="p">()</span>
+<span class="go">{&#39;channel&#39;: b&#39;my-channel&#39;, &#39;data&#39;: b&#39;my data&#39;, &#39;pattern&#39;: None, &#39;type&#39;: &#39;message&#39;}</span>
+</pre></div>
+</div>
+<p>读取消息有三种不同的策略。</p>
+<p>上述示例使用了 pubsub.get_message()。在幕后，get_message() 使用系统的 'select' 模块快速轮询连接的套接字。如果有可供读取的数据，get_message() 将读取它，格式化消息并返回或传递给消息处理程序。如果没有数据可供读取，get_message() 将立即返回 None。这使得将其集成到您应用程序中的现有事件循环中变得微不足道。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">message</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get_message</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">if</span> <span class="n">message</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="c1"># 处理消息</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span>  <span class="c1"># 对系统友好 :)</span>
+</pre></div>
+</div>
+<p>旧版本的 redis-py 仅使用 pubsub.listen() 读取消息。listen() 是一个生成器，阻塞直到有消息可用。如果您的应用程序不需要做其他事情，只需接收和处理来自 redis 的消息，listen() 是一种简单的启动方式。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">listen</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="c1"># 处理消息</span>
+</pre></div>
+</div>
+<p>第三个选项是在单独的线程中运行事件循环。pubsub.run_in_thread() 创建一个新线程并启动事件循环。线程对象将返回给 run_in_thread() 的调用者。调用者可以使用 thread.stop() 方法关闭事件循环和线程。在幕后，这只是 get_message() 的一个包装，它在单独的线程中运行，实际上为您创建了一个微小的非阻塞事件循环。run_in_thread() 还接受一个可选的 sleep_time 参数。如果指定，事件循环将在每次循环迭代中调用 time.sleep()。</p>
+<p>注意：由于我们在单独的线程中运行，因此无法处理未通过注册的消息处理程序自动处理的消息。因此，redis-py 阻止您在订阅没有消息处理程序附加的模式或频道时调用 run_in_thread()。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;my-channel&#39;</span><span class="p">:</span> <span class="n">my_handler</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thread</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">run_in_thread</span><span class="p">(</span><span class="n">sleep_time</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+<span class="go"># 事件循环现在在后台运行，处理消息</span>
+<span class="go"># 当需要关闭时...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thread</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>run_in_thread 还支持一个可选的异常处理程序，允许您捕获在工作线程中发生的异常并进行适当处理。异常处理程序将以异常本身、pubsub 对象和 run_in_thread 返回的工作线程作为参数。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;my-channel&#39;</span><span class="p">:</span> <span class="n">my_handler</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">exception_handler</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="n">pubsub</span><span class="p">,</span> <span class="n">thread</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="nb">print</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">thread</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">thread</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">pubsub</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thread</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">run_in_thread</span><span class="p">(</span><span class="n">exception_handler</span><span class="o">=</span><span class="n">exception_handler</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>PubSub 对象遵循与其创建时的客户端实例相同的编码语义。任何 Unicode 的频道或模式将在发送到 Redis 之前使用客户端指定的字符集进行编码。如果客户端的 decode_responses 标志设置为 False（默认值），则消息字典中的 'channel'、'pattern' 和 'data' 值将是字节字符串（在 Python 2 中为 str，在 Python 3 中为 bytes）。如果客户端的 decode_responses 为 True，则 'channel'、'pattern' 和 'data' 值将使用客户端的字符集自动解码为 Unicode 字符串。</p>
+<p>PubSub 对象记住它们订阅的频道和模式。如果发生断开连接，例如网络错误或超时，PubSub 对象将在重新连接时重新订阅所有先前的频道和模式。在客户端断开连接期间发布的消息无法交付。当您完成使用 PubSub 对象时，请调用其 .close() 方法以关闭连接。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">pubsub</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>PUBSUB 子命令集 CHANNELS、NUMSUB 和 NUMPAT 也受支持：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">pubsub_channels</span><span class="p">()</span>
+<span class="go">[b&#39;foo&#39;, b&#39;bar&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">pubsub_numsub</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+<span class="go">[(b&#39;foo&#39;, 9001), (b&#39;bar&#39;, 42)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">pubsub_numsub</span><span class="p">(</span><span class="s1">&#39;baz&#39;</span><span class="p">)</span>
+<span class="go">[(b&#39;baz&#39;, 0)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">pubsub_numpat</span><span class="p">()</span>
+<span class="go">1204</span>
+</pre></div>
+</div>
+<section id="pubsub-sharded-pubsub">
+<h3>共享 pubsub(Sharded pubsub)<a class="headerlink" href="#pubsub-sharded-pubsub" title="Link to this heading">¶</a></h3>
+<p><a class="reference external" href="https://redis.io/docs/interact/pubsub/#:~:text=Sharded%20Pub%2FSub%20helps%20to,the%20shard%20of%20a%20cluster.">Sharded pubsub</a> 是 Redis 7.0 引入的一项功能，并在 5.0 版本的 redis-py 中得到完全支持。它通过将消息分片到拥有分片通道槽的节点，帮助扩展集群模式下的 pub/sub 使用。在这里，集群确保发布的分片消息被转发到适当的节点。客户端通过连接到负责该槽的主节点或其任何副本来订阅频道。</p>
+<p>这利用了 Redis 中的 <a class="reference external" href="https://redis.io/commands/ssubscribe">SSUBSCRIBE</a> 和 <a class="reference external" href="https://redis.io/commands/spublish">SPUBLISH</a> 命令。</p>
+<p>以下是一个简化的示例：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">redis.cluster</span> <span class="kn">import</span> <span class="n">RedisCluster</span><span class="p">,</span> <span class="n">ClusterNode</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">RedisCluster</span><span class="p">(</span><span class="n">startup_nodes</span><span class="o">=</span><span class="p">[</span><span class="n">ClusterNode</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">6379</span><span class="p">),</span> <span class="n">ClusterNode</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">6380</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">pubsub</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">ssubscribe</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># 假设某人通过发布沿通道发送了一条消息</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">message</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get_sharded_message</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>同样，可以通过将节点传递给 get_sharded_message 来获取已发送到特定节点的分片 pubsub 消息：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">redis.cluster</span> <span class="kn">import</span> <span class="n">RedisCluster</span><span class="p">,</span> <span class="n">ClusterNode</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">first_node</span> <span class="o">=</span> <span class="n">ClusterNode</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">6379</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">second_node</span> <span class="o">=</span> <span class="n">ClusterNode</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">6380</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">RedisCluster</span><span class="p">(</span><span class="n">startup_nodes</span><span class="o">=</span><span class="p">[</span><span class="n">first_node</span><span class="p">,</span> <span class="n">second_node</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">pubsub</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">ssubscribe</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># 假设某人通过发布沿通道发送了一条消息</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">message</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get_sharded_message</span><span class="p">(</span><span class="n">target_node</span><span class="o">=</span><span class="n">second_node</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="monitor">
+<h3>监控(Monitor)<a class="headerlink" href="#monitor" title="Link to this heading">¶</a></h3>
+<p>redis-py 包含一个 Monitor 对象，可以流式传输 Redis 服务器处理的每个命令。使用 Monitor 对象上的 listen() 阻塞直到接收到命令。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">r</span><span class="o">.</span><span class="n">monitor</span><span class="p">()</span> <span class="k">as</span> <span class="n">m</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">listen</span><span class="p">():</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="nb">print</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="examples.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Examples</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="resp3_features.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">RESP 3 功能(RESP 3 Features)</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Redis Inc
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/redis/redis-py" aria-label="GitHub">
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+            </svg>
+        </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">高级功能(Advanced Features)</a><ul>
+<li><a class="reference internal" href="#a-note-about-threading">关于线程的说明(A note about threading)</a></li>
+<li><a class="reference internal" href="#pipelines">管道(Pipelines)</a><ul>
+<li><a class="reference internal" href="#default-pipelines">默认管道(Default pipelines)</a></li>
+<li><a class="reference internal" href="#pipelines-in-clusters">集群中的管道(Pipelines in clusters)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#publish-subscribe">发布/订阅(Publish / Subscribe)</a><ul>
+<li><a class="reference internal" href="#pubsub-sharded-pubsub">共享 pubsub(Sharded pubsub)</a></li>
+<li><a class="reference internal" href="#monitor">监控(Monitor)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=91cf81b4"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="_static/translations.js?v=beaddf03"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    </body>
+</html>

@@ -1,0 +1,408 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true,
+    "pycharm": {
+     "name": "#%% md\n"
+    }
+   },
+   "source": [
+    "# 异步示例(Asyncio Examples)\n",
+    "\n",
+    "所有命令都是协程函数。\n",
+    "\n",
+    "## 连接和断开连接(Connecting and Disconnecting)\n",
+    "\n",
+    "使用 asyncio Redis 需要显式地断开连接，因为没有 asyncio 的析构魔法方法。默认情况下，在 `redis.Redis()` 中创建一个内部连接池并附加到 `Redis` 实例。当调用 `Redis.aclose` 时，这个内部连接池会自动关闭，从而断开所有连接。"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "collapsed": false,
+    "pycharm": {
+     "name": "#%%\n"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Ping successful: True\n"
+     ]
+    }
+   ],
+   "source": [
+    "import redis.asyncio as redis\n",
+    "\n",
+    "client = redis.Redis()\n",
+    "print(f\"Ping successful: {await client.ping()}\")\n",
+    "await client.aclose()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "如果您创建一个自定义的 `ConnectionPool` 以供单个 `Redis` 实例使用，请使用 `Redis.from_pool` 类方法。Redis 客户端将拥有这个连接池。这将导致连接池与 Redis 实例一起断开连接。断开连接池只是简单地断开池中所有托管连接。"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import redis.asyncio as redis\n",
+    "\n",
+    "pool = redis.ConnectionPool.from_url(\"redis://localhost\")\n",
+    "client = redis.Redis.from_pool(pool)\n",
+    "await client.aclose()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": false,
+    "pycharm": {
+     "name": "#%% md\n"
+    }
+   },
+   "source": [
+    "\n",
+    "但是，如果 `ConnectionPool` 要被多个 `Redis` 实例共享，您应该使用 `connection_pool` 参数，并且可能需要显式地断开连接池。"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "collapsed": false,
+    "pycharm": {
+     "name": "#%%\n"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "import redis.asyncio as redis\n",
+    "\n",
+    "pool = redis.ConnectionPool.from_url(\"redis://localhost\")\n",
+    "client1 = redis.Redis(connection_pool=pool)\n",
+    "client2 = redis.Redis(connection_pool=pool)\n",
+    "await client1.aclose()\n",
+    "await client2.aclose()\n",
+    "await pool.aclose()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "默认情况下，该库使用 RESP 协议的版本 2。要启用 RESP 版本 3，您需要将 `protocol` 设置为 3。"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import redis.asyncio as redis\n",
+    "\n",
+    "client = redis.Redis(protocol=3)\n",
+    "await client.aclose()\n",
+    "await client.ping()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": false,
+    "pycharm": {
+     "name": "#%% md\n"
+    }
+   },
+   "source": [
+    "## 事务 (Multi/Exec)\n",
+    "\n",
+    "aioredis.Redis.pipeline 将返回一个 aioredis.Pipeline 对象，该对象会在内存中缓冲所有命令，并使用 Redis Bulk String 协议将其编译成批次。此外，每个命令将返回 Pipeline 实例，允许您链式调用命令，例如 `p.set('foo', 1).set('bar', 2).mget('foo', 'bar')`。\n",
+    "\n",
+    "在调用并等待 `execute()` 之前，这些命令不会反映在 Redis 中。\n",
+    "\n",
+    "通常，在执行批量操作时，利用“事务”（例如 Multi/Exec）是值得的，因为它还将为您的批量操作增加一层原子性。"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "collapsed": false,
+    "pycharm": {
+     "name": "#%%\n"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "import redis.asyncio as redis\n",
+    "\n",
+    "r = await redis.from_url(\"redis://localhost\")\n",
+    "async with r.pipeline(transaction=True) as pipe:\n",
+    "    ok1, ok2 = await (pipe.set(\"key1\", \"value1\").set(\"key2\", \"value2\").execute())\n",
+    "assert ok1\n",
+    "assert ok2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": false,
+    "pycharm": {
+     "name": "#%% md\n"
+    }
+   },
+   "source": [
+    "## 发布/订阅模式(Pub/Sub Mode)\n",
+    "\n",
+    "订阅指定频道:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "collapsed": false,
+    "pycharm": {
+     "name": "#%%\n"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(Reader) Message Received: {'type': 'message', 'pattern': None, 'channel': b'channel:1', 'data': b'Hello'}\n",
+      "(Reader) Message Received: {'type': 'message', 'pattern': None, 'channel': b'channel:2', 'data': b'World'}\n",
+      "(Reader) Message Received: {'type': 'message', 'pattern': None, 'channel': b'channel:1', 'data': b'STOP'}\n",
+      "(Reader) STOP\n"
+     ]
+    }
+   ],
+   "source": [
+    "import asyncio\n",
+    "\n",
+    "import redis.asyncio as redis\n",
+    "\n",
+    "STOPWORD = \"STOP\"\n",
+    "\n",
+    "\n",
+    "async def reader(channel: redis.client.PubSub):\n",
+    "    while True:\n",
+    "        message = await channel.get_message(ignore_subscribe_messages=True, timeout=None)\n",
+    "        if message is not None:\n",
+    "            print(f\"(Reader) Message Received: {message}\")\n",
+    "            if message[\"data\"].decode() == STOPWORD:\n",
+    "                print(\"(Reader) STOP\")\n",
+    "                break\n",
+    "\n",
+    "r = redis.from_url(\"redis://localhost\")\n",
+    "async with r.pubsub() as pubsub:\n",
+    "    await pubsub.subscribe(\"channel:1\", \"channel:2\")\n",
+    "\n",
+    "    future = asyncio.create_task(reader(pubsub))\n",
+    "\n",
+    "    await r.publish(\"channel:1\", \"Hello\")\n",
+    "    await r.publish(\"channel:2\", \"World\")\n",
+    "    await r.publish(\"channel:1\", STOPWORD)\n",
+    "\n",
+    "    await future"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": false,
+    "pycharm": {
+     "name": "#%% md\n"
+    }
+   },
+   "source": [
+    "订阅与通配符样式模式匹配的频道："
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "collapsed": false,
+    "pycharm": {
+     "name": "#%%\n"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(Reader) Message Received: {'type': 'pmessage', 'pattern': b'channel:*', 'channel': b'channel:1', 'data': b'Hello'}\n",
+      "(Reader) Message Received: {'type': 'pmessage', 'pattern': b'channel:*', 'channel': b'channel:2', 'data': b'World'}\n",
+      "(Reader) Message Received: {'type': 'pmessage', 'pattern': b'channel:*', 'channel': b'channel:1', 'data': b'STOP'}\n",
+      "(Reader) STOP\n"
+     ]
+    }
+   ],
+   "source": [
+    "import asyncio\n",
+    "\n",
+    "import redis.asyncio as redis\n",
+    "\n",
+    "STOPWORD = \"STOP\"\n",
+    "\n",
+    "\n",
+    "async def reader(channel: redis.client.PubSub):\n",
+    "    while True:\n",
+    "        message = await channel.get_message(ignore_subscribe_messages=True, timeout=None)\n",
+    "        if message is not None:\n",
+    "            print(f\"(Reader) Message Received: {message}\")\n",
+    "            if message[\"data\"].decode() == STOPWORD:\n",
+    "                print(\"(Reader) STOP\")\n",
+    "                break\n",
+    "\n",
+    "\n",
+    "r = await redis.from_url(\"redis://localhost\")\n",
+    "async with r.pubsub() as pubsub:\n",
+    "    await pubsub.psubscribe(\"channel:*\")\n",
+    "\n",
+    "    future = asyncio.create_task(reader(pubsub))\n",
+    "\n",
+    "    await r.publish(\"channel:1\", \"Hello\")\n",
+    "    await r.publish(\"channel:2\", \"World\")\n",
+    "    await r.publish(\"channel:1\", STOPWORD)\n",
+    "\n",
+    "    await future"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": false,
+    "pycharm": {
+     "name": "#%% md\n"
+    }
+   },
+   "source": [
+    "## 哨兵客户端(Sentinel)\n",
+    "\n",
+    "哨兵客户端需要一组 Redis Sentinel 地址以进行连接并开始发现服务。\n",
+    "\n",
+    "调用 `aioredis.sentinel.Sentinel.master_for` 或 `aioredis.sentinel.Sentinel.slave_for` 方法将返回连接到 Sentinel 监控的指定服务的 Redis 客户端。\n",
+    "\n",
+    "Sentinel 客户端将自动检测故障转移并重新连接 Redis 客户端。"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": false,
+    "pycharm": {
+     "name": "#%%\n"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "import asyncio\n",
+    "\n",
+    "from redis.asyncio.sentinel import Sentinel\n",
+    "\n",
+    "\n",
+    "sentinel = Sentinel([(\"localhost\", 26379), (\"sentinel2\", 26379)])\n",
+    "r = sentinel.master_for(\"mymaster\")\n",
+    "\n",
+    "ok = await r.set(\"key\", \"value\")\n",
+    "assert ok\n",
+    "val = await r.get(\"key\")\n",
+    "assert val == b\"value\""
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 通过指定 URL 方案连接到 Redis 实例\n",
+    "\n",
+    "参数作为参数传递给以下方案。\n",
+    "\n",
+    "支持三种 URL 方案：\n",
+    "\n",
+    "- `redis://` 创建一个 TCP 套接字连接。 <https://www.iana.org/assignments/uri-schemes/prov/redis>\n",
+    "- `rediss://` 创建一个 SSL 包装的 TCP 套接字连接。 <https://www.iana.org/assignments/uri-schemes/prov/rediss>\n",
+    "- `unix://` 创建一个 Unix 域套接字连接。\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "True"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "import redis.asyncio as redis\n",
+    "url_connection = redis.from_url(\"redis://localhost:6379?decode_responses=True\")\n",
+    "url_connection.ping()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "要启用 RESP 3 协议，请在 URL 后附加 `protocol=3`。"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import redis.asyncio as redis\n",
+    "\n",
+    "url_connection = redis.from_url(\"redis://localhost:6379?decode_responses=True&protocol=3\")\n",
+    "url_connection.ping()"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.7"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 1
+}
