@@ -19,7 +19,9 @@ jobs:
       - name: 安装依赖1
         # 安装当前的项目作为一个包
         run: |
-          pip install . && apt-get install pandoc
+          sudo apt-get update -yqq
+          sudo apt-get install -yqq pandoc make
+          pip install .
       - name: 安装依赖2
         run: |
           pip install sphinx sphinx_rtd_theme furo docutils myst-parser  nbsphinx sphinx_gallery ipython sphinx-autodoc-typehints pandoc
