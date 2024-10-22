@@ -1,4 +1,4 @@
-Lock
+锁(Lock)
 #########
 
 .. automodule:: redis.lock

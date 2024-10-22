@@ -1,14 +1,14 @@
-RESP 3 Features
-===============
+RESP 3 功能(RESP 3 Features)
+==============================
 
-As of version 5.0, redis-py supports the `RESP 3 standard <https://github.com/redis/redis-specifications/blob/master/protocol/RESP3.md>`_. Practically, this means that client using RESP 3 will be faster and more performant as fewer type translations occur in the client. It also means new response types like doubles, true simple strings, maps, and booleans are available.
+从 5.0 版本开始，redis-py 支持 `RESP 3 标准 <https://github.com/redis/redis-specifications/blob/master/protocol/RESP3.md>`_。实际上，这意味着使用 RESP 3 的客户端将更快、更高效，因为在客户端中发生的类型转换更少。这也意味着新的响应类型，如双精度数、简单字符串、映射和布尔值变得可用。
 
-Connecting
------------
+连接(Connecting)
+----------------------
 
-Enabling RESP3 is no different than other connections in redis-py. In all cases, the connection type must be extending by setting `protocol=3`. The following are some base examples illustrating how to enable a RESP 3 connection.
+启用 RESP 3 与在 redis-py 中进行其他连接并无不同。在所有情况下，都必须通过设置 `protocol=3` 来扩展连接类型。以下是一些启用 RESP 3 连接的基础示例。
 
-Connect with a standard connection, but specifying resp 3:
+使用标准连接，但指定 RESP 3：
 
 .. code:: python
 
@@ -16,7 +16,7 @@ Connect with a standard connection, but specifying resp 3:
     >>> r = redis.Redis(host='localhost', port=6379, protocol=3)
     >>> r.ping()
 
-Or using the URL scheme:
+或者使用 URL 方案：
 
 .. code:: python
 
@@ -24,7 +24,7 @@ Or using the URL scheme:
     >>> r = redis.from_url("redis://localhost:6379?protocol=3")
     >>> r.ping()
 
-Connect with async, specifying resp 3:
+使用异步连接并指定 RESP 3：
 
 .. code:: python
 
@@ -32,7 +32,7 @@ Connect with async, specifying resp 3:
     >>> r = redis.Redis(host='localhost', port=6379, protocol=3)
     >>> await r.ping()
 
-The URL scheme with the async client
+异步客户端使用 URL 方案：
 
 .. code:: python
 
@@ -40,7 +40,7 @@ The URL scheme with the async client
     >>> r = redis.from_url("redis://localhost:6379?protocol=3")
     >>> await r.ping()
 
-Connecting to an OSS Redis Cluster with RESP 3
+连接到启用 RESP 3 的 OSS Redis 集群：
 
 .. code:: python
 
@@ -48,12 +48,12 @@ Connecting to an OSS Redis Cluster with RESP 3
     >>> r = RedisCluster(startup_nodes=[ClusterNode('localhost', 6379), ClusterNode('localhost', 6380)], protocol=3)
     >>> r.ping()
 
-Push notifications
-------------------
+推送通知(Push notifications)  
+------------------------------------
 
-Push notifications are a way that redis sends out of band data. The RESP 3 protocol includes a `push type <https://github.com/redis/redis-specifications/blob/master/protocol/RESP3.md#push-type>`_ that allows our client to intercept these out of band messages. By default, clients will log simple messages, but redis-py includes the ability to bring your own function processor.
+推送通知是 redis 发送带外数据的一种方式。RESP 3 协议包括一个 `push 类型 <https://github.com/redis/redis-specifications/blob/master/protocol/RESP3.md#push-type>`_，它允许我们的客户端拦截这些带外消息。默认情况下，客户端将记录简单的消息，但 redis-py 提供了使用自定义函数处理器的能力。
 
-This means that should you want to perform something, on a given push notification, you specify a function during the connection, as per this examples:
+这意味着如果你想在接收到特定的推送通知时执行某些操作，可以在连接期间指定一个函数，如下所示：
 
 .. code:: python
 
@@ -66,19 +66,16 @@ This means that should you want to perform something, on a given push notificati
     >> r = Redis(protocol=3)
     >> p = r.pubsub(push_handler_func=our_func)
 
-In the example above, upon receipt of a push notification, rather than log the message, in the case where specific text occurs, an IOError is raised. This example, highlights how one could start implementing a customized message handler.
+在上面的示例中，当收到推送通知时，如果出现特定文本，不是记录消息，而是抛出一个 IOError 。这例子展示了如何开始实现自定义消息处理程序。
 
-Client-side caching
--------------------
+客户端缓存(Client-side caching)
+--------------------------------------
 
-Client-side caching is a technique used to create high performance services.
-It utilizes the memory on application servers, typically separate from the database nodes, to cache a subset of the data directly on the application side.
-For more information please check `official Redis documentation <https://redis.io/docs/latest/develop/use/client-side-caching/>`_.
-Please notice that this feature only available with RESP3 protocol enabled in sync client only. Supported in standalone, Cluster and Sentinel clients.
+客户端缓存是一种用于创建高性能服务的技术。它利用应用程序服务器上的内存（通常与数据库节点分离）在应用程序端直接缓存一部分数据。有关更多信息，请查阅 `官方 Redis 文档 <https://redis.io/docs/latest/develop/use/client-side-caching/>`_ 。请注意，此功能仅在启用了 RESP3 协议的同步客户端中可用。支持独立模式、集群和哨兵客户端。
 
-Basic usage:
+基本用法：
 
-Enable caching with default configuration:
+使用默认配置启用缓存：
 
 .. code:: python
 
@@ -86,9 +83,9 @@ Enable caching with default configuration:
     >>> from redis.cache import CacheConfig
     >>> r = redis.Redis(host='localhost', port=6379, protocol=3, cache_config=CacheConfig())
 
-The same interface applies to Redis Cluster and Sentinel.
+相同的接口适用于 Redis 集群和哨兵。
 
-Enable caching with custom cache implementation:
+使用自定义缓存实现启用缓存：
 
 .. code:: python
 
@@ -96,6 +93,6 @@ Enable caching with custom cache implementation:
     >>> from foo.bar import CacheImpl
     >>> r = redis.Redis(host='localhost', port=6379, protocol=3, cache=CacheImpl())
 
-CacheImpl should implement a `CacheInterface` specified in `redis.cache` package.
+CacheImpl 应该实现 `redis.cache` 包中指定的 `CacheInterface`。
 
-More comprehensive documentation soon will be available at `official Redis documentation <https://redis.io/docs/latest/>`_.
+更全面的文档将很快在 `官方 Redis 文档 <https://redis.io/docs/latest/>`_ 中提供。

@@ -1,7 +1,7 @@
 .. _exceptions-label:
 
-Exceptions
-##########
+异常(Exceptions)
+####################
 
 .. automodule:: redis.exceptions
     :members:

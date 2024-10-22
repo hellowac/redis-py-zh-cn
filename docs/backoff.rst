@@ -1,6 +1,6 @@
 .. _backoff-label:
 
-Backoff
+回退(Backoff)
 #############
 
 .. automodule:: redis.backoff
